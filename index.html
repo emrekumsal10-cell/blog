@@ -3,224 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KPSS Önlisans Pusulası - Başarıya Giden Yolda Rehberiniz</title>
-    <meta name="description" content="KPSS Ön Lisans sınavına hazırlık için en kapsamlı kaynak. Konu anlatımları, soru bankası, deneme sınavları ve kişiselleştirilmiş çalışma planı ile hedeflerinize ulaşın.">
-    <meta name="keywords" content="KPSS, Önlisans, KPSS Hazırlık, Soru Bankası, Deneme Sınavı, Türkçe, Matematik, Tarih, Coğrafya, Vatandaşlık">
+    <title>KPSS Önlisans Haftalık Ders Planlayıcı</title>
     
     <link rel="stylesheet" href="style.css">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <header>
-        <div class="container">
-            <a href="index.html" class="logo">KPSS Önlisans <strong>Pusulası</strong></a>
-            <nav>
-                <ul>
-                    <li><a href="#anasayfa">Ana Sayfa</a></li>
-                    <li><a href="#dersler">Dersler</a></li>
-                    <li><a href="#denemeler">Deneme Sınavları</a></li>
-                    <li><a href="#rehberlik">Rehberlik</a></li>
-                </ul>
-            </nav>
-            <div class="auth-buttons">
-                <a href="#giris" class="btn btn-secondary">Giriş Yap</a>
-                <a href="#kayit" class="btn btn-primary">Kayıt Ol</a>
+    <div class="planner-container">
+        <header>
+            <h1>KPSS Önlisans Planlayıcı</h1>
+            <p>Çalışma ve sınav tarihlerini seç, sana özel haftalık ders planın anında hazır olsun!</p>
+        </header>
+        
+        <div class="input-area">
+            <div class="input-group">
+                <label for="baslangicTarihi">Çalışmaya Başlama Tarihi</label>
+                <input type="date" id="baslangicTarihi">
+            </div>
+            <div class="input-group">
+                <label for="sinavTarihi">Sınav Tarihi</label>
+                <input type="date" id="sinavTarihi">
+            </div>
+            <button id="planOlusturBtn">Plan Oluştur</button>
+        </div>
+
+        <div id="planContainer" class="plan-output">
+            <div id="planOzeti"></div>
+            <div id="haftalikPlan">
+                <p class="placeholder">Lütfen tarihleri seçip "Plan Oluştur" butonuna tıklayın.</p>
             </div>
         </div>
-    </header>
 
-    <main>
-        <section id="anasayfa" class="hero">
-            <div class="container">
-                <h1>KPSS Ön Lisans'ta Zirveye Oynayın</h1>
-                <p>Türkiye'nin en güncel kaynakları, akıllı çalışma planları ve binlerce soruyla hedeflerinize ulaşın.</p>
-                <div class="hero-buttons">
-                    <a href="#kayit" class="btn btn-primary btn-lg">Hemen Başla</a>
-                    <a href="#ozellikler" class="btn btn-outline-light btn-lg">Keşfet</a>
-                </div>
-            </div>
-        </section>
-
-        <section id="ozellikler" class="features">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Neden Biz?</h2>
-                    <p>Sınav hazırlık sürecinizi en verimli hale getirecek özellikler bir arada.</p>
-                </div>
-                <div class="feature-grid">
-                    <div class="feature-item">
-                        <i class="fas fa-book-open"></i>
-                        <h3>Kapsamlı İçerik</h3>
-                        <p>Güncel müfredata uygun, video ve infografiklerle zenginleştirilmiş on binlerce sayfa konu anlatımı.</p>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-bullseye"></i>
-                        <h3>Kişiselleştirilmiş Plan</h3>
-                        <p>Seviyenize ve hedeflerinize özel, yapay zeka destekli akıllı çalışma programları oluşturun.</p>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-award"></i>
-                        <h3>Türkiye Geneli Denemeler</h3>
-                        <p>Gerçek sınav deneyimi yaşayın, on binlerce aday arasındaki sıralamanızı anında görün.</p>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-user-tie"></i>
-                        <h3>Uzman Desteği</h3>
-                        <p>Anlamadığınız konuları uzman eğitmenlerimize sorun, canlı yayınlarla eksiklerinizi giderin.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="dersler" class="courses">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Popüler Dersler</h2>
-                    <p>Sınavın temel taşları olan derslere hemen çalışmaya başlayın.</p>
-                </div>
-                <div class="course-grid">
-                    <a href="#" class="course-card">
-                        <i class="fas fa-spell-check"></i>
-                        <h3>Türkçe</h3>
-                        <p>Paragraf, dil bilgisi ve sözel mantık konularında ustalaşın.</p>
-                    </a>
-                    <a href="#" class="course-card">
-                        <i class="fas fa-calculator"></i>
-                        <h3>Matematik</h3>
-                        <p>Temel kavramlardan problemlere, sayısal mantığa kadar tüm konular.</p>
-                    </a>
-                    <a href="#" class="course-card">
-                        <i class="fas fa-landmark"></i>
-                        <h3>Tarih</h3>
-                        <p>İslamiyet öncesinden günümüze, tüm kritik tarih bilgileri.</p>
-                    </a>
-                    <a href="#" class="course-card">
-                        <i class="fas fa-map-location-dot"></i>
-                        <h3>Coğrafya</h3>
-                        <p>Türkiye'nin fiziki, beşeri ve ekonomik coğrafyası hakkında her şey.</p>
-                    </a>
-                    <a href="#" class="course-card">
-                        <i class="fas fa-gavel"></i>
-                        <h3>Vatandaşlık</h3>
-                        <p>Anayasa, idare hukuku ve temel hukuk kavramları güncel haliyle.</p>
-                    </a>
-                    <a href="#" class="course-card">
-                        <i class="fas fa-globe"></i>
-                        <h3>Güncel Bilgiler</h3>
-                        <p>Sınavda çıkabilecek en son gelişmeler ve genel kültür bilgileri.</p>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <section id="denemeler" class="trial-exam">
-            <div class="container">
-                <h2>Büyük Türkiye Geneli Online Deneme Sınavı</h2>
-                <p>Binlerce adayla kendini test etmeye hazır mısın? Büyük deneme için geri sayım başladı!</p>
-                <div id="countdown">
-                    <div class="time-box"><span id="days">00</span> Gün</div>
-                    <div class="time-box"><span id="hours">00</span> Saat</div>
-                    <div class="time-box"><span id="minutes">00</span> Dakika</div>
-                    <div class="time-box"><span id="seconds">00</span> Saniye</div>
-                </div>
-                <a href="#" class="btn btn-primary btn-lg">Hemen Kayıt Ol ve Yerini Ayırt</a>
-            </div>
-        </section>
-        
-        <section id="faq" class="faq">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Sıkça Sorulan Sorular</h2>
-                    <p>Aklınıza takılan soruların cevaplarını burada bulabilirsiniz.</p>
-                </div>
-                <div class="faq-list">
-                    <details>
-                        <summary>Sitenize üyelik ücretli mi?</summary>
-                        <p>Sitemize kayıt olmak tamamen ücretsizdir. Ücretsiz üyelerimiz belirli içeriklere ve deneme sınavlarına erişebilir. Tüm içeriklere sınırsız erişim için Premium üyelik paketlerimizi inceleyebilirsiniz.</p>
-                    </details>
-                    <details>
-                        <summary>Çalışma programları kişiye özel mi hazırlanıyor?</summary>
-                        <p>Evet. Başlangıçta yapacağımız seviye tespit sınavı ve belirlediğiniz hedeflere göre akıllı algoritmamız size özel bir çalışma programı hazırlar. Bu program, ilerlemenize göre dinamik olarak güncellenir.</p>
-                    </details>
-                    <details>
-                        <summary>Deneme sınavlarının zorluk seviyesi gerçek sınavla uyumlu mu?</summary>
-                        <p>Kesinlikle. Tüm deneme sınavlarımız, ÖSYM'nin geçmiş yıllardaki soru dağılımları ve zorluk seviyeleri analiz edilerek alanında uzman hocalarımız tarafından hazırlanmaktadır.</p>
-                    </details>
-                </div>
-            </div>
-        </section>
-    </main>
+    </div>
 
     <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <h3>KPSS Önlisans Pusulası</h3>
-                    <p>Başarıya giden yolda rehberiniz. 2025 © Tüm hakları saklıdır.</p>
-                </div>
-                <div class="footer-col">
-                    <h4>Hızlı Erişim</h4>
-                    <ul>
-                        <li><a href="#">Hakkımızda</a></li>
-                        <li><a href="#">İletişim</a></li>
-                        <li><a href="#">Gizlilik Politikası</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Sosyal Medya</h4>
-                    <div class="social-links">
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="Youtube"><i class="fab fa-youtube"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <p>Gemini AI tarafından bir planlama aracı olarak tasarlandı.</p>
     </footer>
 
     <script>
-        // Geri Sayım Sayacı Scripti
-        (function() {
-            // Hedef tarihi belirle (Örnek: 30 gün sonrası)
-            const targetDate = new Date();
-            targetDate.setDate(targetDate.getDate() + 30);
-            targetDate.setHours(10, 0, 0, 0); // Sabah 10:00
+        // TÜM KPSS ÖNLİSANS KONULARI
+        const konular = [
+            // Türkçe Konuları
+            { konu: "Sözcükte Anlam", ders: "Türkçe" },
+            { konu: "Cümlede Anlam", ders: "Türkçe" },
+            { konu: "Paragrafta Anlam", ders: "Türkçe" },
+            { konu: "Ses Bilgisi", ders: "Türkçe" },
+            { konu: "Yazım Kuralları", ders: "Türkçe" },
+            { konu: "Noktalama İşaretleri", ders: "Türkçe" },
+            { konu: "Sözcük Yapısı (Kökler, Ekler)", ders: "Türkçe" },
+            { konu: "Sözcük Türleri (İsim, Sıfat, Zamir, Zarf)", ders: "Türkçe" },
+            { konu: "Fiiller (Çatı, Kip, Ek Fiil, Fiilimsi)", ders: "Türkçe" },
+            { konu: "Cümlenin Ögeleri", ders: "Türkçe" },
+            { konu: "Cümle Türleri", ders: "Türkçe" },
+            { konu: "Anlatım Bozuklukları", ders: "Türkçe" },
+            { konu: "Sözel Mantık", ders: "Türkçe" },
+            
+            // Matematik Konuları
+            { konu: "Temel Kavramlar (Sayılar)", ders: "Matematik" },
+            { konu: "Bölme ve Bölünebilme Kuralları", ders: "Matematik" },
+            { konu: "Asal Çarpanlara Ayırma, EBOB-EKOK", ders: "Matematik" },
+            { konu: "Rasyonel Sayılar", ders: "Matematik" },
+            { konu: "Basit Eşitsizlikler", ders: "Matematik" },
+            { konu: "Mutlak Değer", ders: "Matematik" },
+            { konu: "Üslü Sayılar", ders: "Matematik" },
+            { konu: "Köklü Sayılar", ders: "Matematik" },
+            { konu: "Çarpanlara Ayırma", ders: "Matematik" },
+            { konu: "Oran - Orantı", ders: "Matematik" },
+            { konu: "Denklem Çözme", ders: "Matematik" },
+            { konu: "Sayı ve Kesir Problemleri", ders: "Matematik" },
+            { konu: "Yaş Problemleri", ders: "Matematik" },
+            { konu: "İşçi - Havuz Problemleri", ders: "Matematik" },
+            { konu: "Yüzde - Kâr - Zarar Problemleri", ders: "Matematik" },
+            { konu: "Karışım Problemleri", ders: "Matematik" },
+            { konu: "Hız - Hareket Problemleri", ders: "Matematik" },
+            { konu: "Kümeler", ders: "Matematik" },
+            { konu: "Fonksiyonlar", ders: "Matematik" },
+            { konu: "Permütasyon, Kombinasyon, Olasılık", ders: "Matematik" },
+            { konu: "Tablo ve Grafik Yorumlama", ders: "Matematik" },
+            { konu: "Sayısal Mantık", ders: "Matematik" },
+            
+            // Tarih Konuları
+            { konu: "İslamiyet Öncesi Türk Tarihi", ders: "Tarih" },
+            { konu: "İlk Müslüman Türk Devletleri", ders: "Tarih" },
+            { konu: "Türkiye Selçuklu Devleti", ders: "Tarih" },
+            { konu: "Osmanlı Devleti Kuruluş Dönemi", ders: "Tarih" },
+            { konu: "Osmanlı Devleti Yükselme Dönemi", ders: "Tarih" },
+            { konu: "Osmanlı Kültür ve Medeniyeti", ders: "Tarih" },
+            { konu: "Osmanlı Duraklama ve Gerileme Dönemi", ders: "Tarih" },
+            { konu: "Osmanlı Dağılma Dönemi ve Islahatlar", ders: "Tarih" },
+            { konu: "20. Yüzyılda Osmanlı (Trablusgarp, Balkan)", ders: "Tarih" },
+            { konu: "I. Dünya Savaşı ve Sonuçları", ders: "Tarih" },
+            { konu: "Milli Mücadele Hazırlık Dönemi", ders: "Tarih" },
+            { konu: "Kurtuluş Savaşı Muharebeler Dönemi", ders: "Tarih" },
+            { konu: "Atatürk İlke ve İnkılapları", ders: "Tarih" },
+            { konu: "Atatürk Dönemi İç ve Dış Politika", ders: "Tarih" },
+            { konu: "Çağdaş Türk ve Dünya Tarihi", ders: "Tarih" },
 
-            const daysEl = document.getElementById('days');
-            const hoursEl = document.getElementById('hours');
-            const minutesEl = document.getElementById('minutes');
-            const secondsEl = document.getElementById('seconds');
+            // Coğrafya Konuları
+            { konu: "Türkiye'nin Coğrafi Konumu", ders: "Coğrafya" },
+            { konu: "Türkiye'nin Yer Şekilleri", ders: "Coğrafya" },
+            { konu: "Türkiye'nin İklimi ve Bitki Örtüsü", ders: "Coğrafya" },
+            { konu: "Türkiye'de Nüfus ve Yerleşme", ders: "Coğrafya" },
+            { konu: "Türkiye'nin Ekonomik Coğrafyası (Tarım)", ders: "Coğrafya" },
+            { konu: "Türkiye'de Hayvancılık ve Ormancılık", ders: "Coğrafya" },
+            { konu: "Türkiye'de Madenler ve Enerji Kaynakları", ders: "Coğrafya" },
+            { konu: "Türkiye'de Sanayi ve Ticaret", ders: "Coğrafya" },
+            { konu: "Türkiye'de Ulaşım ve Turizm", ders: "Coğrafya" },
+            { konu: "Bölgeler Coğrafyası ve Kalkınma Projeleri", ders: "Coğrafya" },
 
-            function updateCountdown() {
-                const now = new Date().getTime();
-                const distance = targetDate - now;
+            // Vatandaşlık Konuları
+            { konu: "Temel Hukuk Kavramları", ders: "Vatandaşlık" },
+            { konu: "Anayasa Hukukuna Giriş", ders: "Vatandaşlık" },
+            { konu: "1982 Anayasası (Temel İlkeler, Hak ve Ödevler)", ders: "Vatandaşlık" },
+            { konu: "Yasama (TBMM)", ders: "Vatandaşlık" },
+            { konu: "Yürütme (Cumhurbaşkanı)", ders: "Vatandaşlık" },
+            { konu: "Yargı", ders: "Vatandaşlık" },
+            { konu: "İdare Hukuku", ders: "Vatandaşlık" },
+        ];
 
-                if (distance < 0) {
-                    clearInterval(interval);
-                    document.getElementById('countdown').innerHTML = "<h3>Deneme Sınavı Başladı!</h3>";
-                    return;
-                }
+        // DOM Elementlerini Seçme
+        const baslangicTarihiInput = document.getElementById('baslangicTarihi');
+        const sinavTarihiInput = document.getElementById('sinavTarihi');
+        const planOlusturBtn = document.getElementById('planOlusturBtn');
+        const planOzetiEl = document.getElementById('planOzeti');
+        const haftalikPlanEl = document.getElementById('haftalikPlan');
+        
+        // Başlangıç tarihlerini bugünden başlat ve sınav tarihini 2026'ya ayarla
+        const bugun = new Date();
+        const sinavTarihiDefault = new Date('2026-09-20'); // Bir sonraki sınav için tahmini tarih
+        baslangicTarihiInput.value = bugun.toISOString().split('T')[0];
+        sinavTarihiInput.value = sinavTarihiDefault.toISOString().split('T')[0];
 
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        planOlusturBtn.addEventListener('click', () => {
+            const baslangicTarihi = new Date(baslangicTarihiInput.value);
+            const sinavTarihi = new Date(sinavTarihiInput.value);
 
-                daysEl.innerText = days < 10 ? '0' + days : days;
-                hoursEl.innerText = hours < 10 ? '0' + hours : hours;
-                minutesEl.innerText = minutes < 10 ? '0' + minutes : minutes;
-                secondsEl.innerText = seconds < 10 ? '0' + seconds : seconds;
+            if (isNaN(baslangicTarihi) || isNaN(sinavTarihi)) {
+                alert('Lütfen geçerli tarihler seçin.');
+                return;
             }
 
-            const interval = setInterval(updateCountdown, 1000);
-            updateCountdown();
-        })();
+            if (baslangicTarihi >= sinavTarihi) {
+                alert('Başlangıç tarihi, sınav tarihinden önce olmalıdır.');
+                return;
+            }
+
+            const gunFarki = (sinavTarihi - baslangicTarihi) / (1000 * 60 * 60 * 24);
+            const haftaSayisi = Math.ceil(gunFarki / 7);
+            const haftalikKonuSayisi = Math.ceil(konular.length / haftaSayisi);
+            
+            // Özet bilgisini göster
+            planOzetiEl.innerHTML = `
+                <h3>Plan Detayları</h3>
+                <p>Toplam <strong>${haftaSayisi}</strong> hafta boyunca, haftada ortalama <strong>${haftalikKonuSayisi}</strong> konu çalışarak programı tamamlayabilirsiniz.</p>
+            `;
+
+            // Haftalık planı oluştur
+            haftalikPlanEl.innerHTML = '';
+            let konuIndex = 0;
+
+            for (let i = 1; i <= haftaSayisi; i++) {
+                const haftaCard = document.createElement('div');
+                haftaCard.classList.add('hafta-card');
+
+                const haftaBasligi = document.createElement('h3');
+                haftaBasligi.innerText = `${i}. Hafta`;
+                haftaCard.appendChild(haftaBasligi);
+
+                const konuListesi = document.createElement('ul');
+                for (let j = 0; j < haftalikKonuSayisi && konuIndex < konular.length; j++) {
+                    const konu = konular[konuIndex];
+                    const listItem = document.createElement('li');
+                    
+                    const dersEtiketiClass = konu.ders.toLowerCase().replace(' ', '-');
+
+                    listItem.innerHTML = `
+                        <label>
+                            <input type="checkbox">
+                            <span>${konu.konu}</span>
+                        </label>
+                        <span class="ders-etiketi ${dersEtiketiClass}">${konu.ders}</span>
+                    `;
+                    konuListesi.appendChild(listItem);
+                    konuIndex++;
+                }
+                haftaCard.appendChild(konuListesi);
+                haftalikPlanEl.appendChild(haftaCard);
+            }
+        });
+        
+        // Çalışılan konuyu işaretleme (event delegation)
+        haftalikPlanEl.addEventListener('change', (e) => {
+            if (e.target.type === 'checkbox') {
+                const listItem = e.target.closest('li');
+                listItem.classList.toggle('tamamlandi', e.target.checked);
+            }
+        });
+
     </script>
+
 </body>
 </html>
