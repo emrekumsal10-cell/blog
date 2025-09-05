@@ -1,12 +1,13 @@
 /* ======================= GENEL STİLLER VE RESETLEME ======================= */
 :root {
     --primary-color: #007bff;
-    --secondary-color: #6c757d;
-    --background-color: #f8f9fa;
+    --success-color: #28a745;
+    --background-color: #f0f2f5;
     --surface-color: #ffffff;
-    --text-color: #343a40;
+    --text-color: #495057;
     --heading-color: #212529;
-    --light-gray: #e9ecef;
+    --border-color: #dee2e6;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 * {
@@ -20,327 +21,192 @@ body {
     background-color: var(--background-color);
     color: var(--text-color);
     line-height: 1.6;
+    padding: 20px;
 }
 
-.container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 20px;
+/* ======================= ANA PLANLAYICI KONTEYNERİ ======================= */
+.planner-container {
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: var(--surface-color);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
 }
 
-h1, h2, h3 {
-    color: var(--heading-color);
-    margin-bottom: 1rem;
-    font-weight: 600;
-}
-
-p {
-    margin-bottom: 1rem;
-}
-
-a {
-    text-decoration: none;
-    color: var(--primary-color);
-}
-
-section {
-    padding: 60px 0;
-}
-
-.section-title {
+header {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 25px;
     text-align: center;
-    margin-bottom: 40px;
 }
 
-.section-title h2 {
-    font-size: 2.5rem;
-    font-weight: 700;
+header h1 {
+    margin-bottom: 5px;
 }
 
-.section-title p {
-    font-size: 1.1rem;
-    color: var(--secondary-color);
+header p {
+    opacity: 0.9;
 }
 
-/* ======================= BUTONLAR ======================= */
-.btn {
-    display: inline-block;
-    padding: 10px 25px;
+/* ======================= GİRİŞ ALANI (TARİH SEÇİMİ) ======================= */
+.input-area {
+    padding: 25px;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--heading-color);
+}
+
+.input-group input[type="date"] {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-family: 'Poppins', sans-serif;
+}
+
+#planOlusturBtn {
+    padding: 12px 30px;
+    background-color: var(--success-color);
+    color: #fff;
     border: none;
     border-radius: 5px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease;
 }
 
-.btn-primary {
-    background-color: var(--primary-color);
-    color: #fff;
+#planOlusturBtn:hover {
+    background-color: #218838;
 }
 
-.btn-primary:hover {
-    background-color: #0056b3;
+/* ======================= PLAN ÇIKTI ALANI ======================= */
+.plan-output {
+    padding: 25px;
 }
 
-.btn-secondary {
-    background-color: transparent;
-    color: var(--heading-color);
-    border: 1px solid var(--light-gray);
+#planOzeti {
+    background-color: #e9ecef;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+#planOzeti h3 {
+    margin-bottom: 10px;
 }
 
-.btn-secondary:hover {
-    background-color: var(--light-gray);
-}
-
-.btn-lg {
-    padding: 15px 35px;
+.placeholder {
+    text-align: center;
+    color: #6c757d;
     font-size: 1.1rem;
+    padding: 40px 0;
 }
 
-.btn-outline-light {
-    background-color: transparent;
-    color: #fff;
-    border: 2px solid #fff;
+/* ======================= HAFTALIK PLAN KARTLARI ======================= */
+#haftalikPlan {
+    display: grid;
+    gap: 20px;
 }
 
-.btn-outline-light:hover {
-    background-color: #fff;
-    color: var(--primary-color);
-}
-
-
-/* ======================= HEADER ======================= */
-header {
+.hafta-card {
     background-color: var(--surface-color);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    padding: 15px 0;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
 }
 
-header .container {
+.hafta-card h3 {
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    color: var(--heading-color);
+}
+
+.hafta-card ul {
+    list-style: none;
+}
+
+.hafta-card li {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 10px 5px;
+    border-bottom: 1px solid #f1f1f1;
+    transition: background-color 0.2s;
 }
 
-header .logo {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--heading-color);
+.hafta-card li:last-child {
+    border-bottom: none;
 }
 
-header .logo strong {
-    color: var(--primary-color);
+.hafta-card li.tamamlandi {
+    opacity: 0.6;
 }
 
-header nav ul {
-    list-style: none;
+.hafta-card li.tamamlandi span {
+    text-decoration: line-through;
+}
+
+.hafta-card li label {
     display: flex;
-    gap: 25px;
-}
-
-header nav a {
-    color: var(--text-color);
-    font-weight: 600;
-    transition: color 0.3s ease;
-}
-
-header nav a:hover {
-    color: var(--primary-color);
-}
-
-/* ======================= HERO BÖLÜMÜ ======================= */
-.hero {
-    background: linear-gradient(rgba(40, 58, 90, 0.7), rgba(40, 58, 90, 0.7)), url('https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=1974&auto=format&fit=crop') no-repeat center center/cover;
-    color: #fff;
-    text-align: center;
-    padding: 120px 0;
-}
-
-.hero h1 {
-    font-size: 3.5rem;
-    color: #fff;
-}
-
-.hero p {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-}
-
-.hero-buttons .btn {
-    margin: 0 10px;
-}
-
-/* ======================= ÖZELLİKLER BÖLÜMÜ ======================= */
-.features {
-    background-color: var(--surface-color);
-}
-
-.feature-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 30px;
-    text-align: center;
-}
-
-.feature-item i {
-    font-size: 3rem;
-    color: var(--primary-color);
-    margin-bottom: 15px;
-}
-
-.feature-item h3 {
-    font-size: 1.3rem;
-}
-
-/* ======================= DERSLER BÖLÜMÜ ======================= */
-.course-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-}
-
-.course-card {
-    background-color: var(--surface-color);
-    padding: 30px;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    color: var(--text-color);
-}
-
-.course-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-}
-
-.course-card i {
-    font-size: 3rem;
-    color: var(--primary-color);
-    margin-bottom: 15px;
-}
-
-.course-card h3 {
-    font-size: 1.4rem;
-}
-
-/* ======================= DENEME SINAVI BÖLÜMÜ ======================= */
-.trial-exam {
-    background-color: var(--heading-color);
-    color: #fff;
-    text-align: center;
-}
-
-.trial-exam h2 {
-    color: #fff;
-    font-size: 2.5rem;
-}
-
-#countdown {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin: 30px 0;
-}
-
-.time-box {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 8px;
-    min-width: 100px;
-}
-
-.time-box span {
-    display: block;
-    font-size: 3rem;
-    font-weight: 700;
-}
-
-/* ======================= SSS BÖLÜMÜ ======================= */
-.faq {
-    background-color: var(--surface-color);
-}
-.faq-list {
-    max-width: 700px;
-    margin: 0 auto;
-}
-details {
-    background: #fff;
-    border: 1px solid var(--light-gray);
-    border-radius: 5px;
-    margin-bottom: 10px;
-    padding: 15px;
-}
-summary {
-    font-weight: 600;
+    align-items: center;
     cursor: pointer;
-    list-style: none; /* Firefox'tan gelen oku kaldırır */
+    flex-grow: 1;
 }
-summary::-webkit-details-marker { /* Chrome/Safari'den gelen oku kaldırır */
-    display: none;
+
+.hafta-card li input[type="checkbox"] {
+    margin-right: 15px;
+    width: 18px;
+    height: 18px;
 }
-details[open] summary {
-    color: var(--primary-color);
+
+/* ======================= DERS ETİKETLERİ ======================= */
+.ders-etiketi {
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 12px;
+    color: #fff;
+    white-space: nowrap;
 }
-details p {
-    padding-top: 15px;
-    color: var(--secondary-color);
-}
+
+.ders-etiketi.türkçe { background-color: #007bff; }
+.ders-etiketi.matematik { background-color: #dc3545; }
+.ders-etiketi.tarih { background-color: #ffc107; color: #333; }
+.ders-etiketi.coğrafya { background-color: #28a745; }
+.ders-etiketi.vatandaşlık { background-color: #6f42c1; }
 
 /* ======================= FOOTER ======================= */
 footer {
-    background-color: var(--heading-color);
-    color: #fff;
-    padding: 40px 0 20px 0;
-}
-.footer-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 30px;
-    padding-bottom: 30px;
-    border-bottom: 1px solid #444;
-}
-.footer-col h3, .footer-col h4 {
-    color: #fff;
-}
-.footer-col ul {
-    list-style: none;
-}
-.footer-col a {
-    color: #ccc;
-    transition: color 0.3s ease;
-}
-.footer-col a:hover {
-    color: #fff;
-}
-.social-links a {
-    font-size: 1.5rem;
-    margin-right: 15px;
+    text-align: center;
+    margin-top: 20px;
+    color: #6c757d;
+    font-size: 0.9rem;
 }
 
-/* ======================= MOBİL UYUMLULUK (RESPONSIVE) ======================= */
-@media (max-width: 768px) {
-    header .container {
+/* ======================= MOBİL UYUMLULUK ======================= */
+@media (max-width: 600px) {
+    .input-area {
         flex-direction: column;
-        gap: 15px;
+        align-items: stretch;
     }
-    
-    header nav ul {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 15px;
-    }
-    
-    .hero h1 {
-        font-size: 2.5rem;
-    }
-
-    #countdown {
-        flex-direction: column;
-        align-items: center;
+    #planOlusturBtn {
+        width: 100%;
     }
 }
-
