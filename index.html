@@ -3,208 +3,365 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KPSS Önlisans Haftalık Ders Planlayıcı</title>
-    
-    <link rel="stylesheet" href="style.css">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Kapsamlı KPSS Önlisans Planlayıcısı</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #1a1a2e; --surface-color: #16213e; --primary-color: #0f3460;
+            --secondary-color: #e94560; --text-color: #e0e0e0; --text-muted: #a0a0a0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color);
+            color: var(--text-color); line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+        nav {
+            display: flex; flex-wrap: wrap; justify-content: center;
+            background-color: var(--surface-color); padding: 0.5rem;
+            border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .nav-link {
+            padding: 0.8rem 1rem; border: none; background: none; color: var(--text-muted);
+            cursor: pointer; font-size: 0.9rem; font-weight: 600; border-radius: 8px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .nav-link.active, .nav-link:hover { background-color: var(--secondary-color); color: white; }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .widget {
+            background-color: var(--surface-color); border-radius: 12px;
+            padding: 1.5rem; margin-bottom: 1.5rem;
+        }
+        h2 { color: white; margin-bottom: 1rem; font-size: 1.5rem; border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; }
+        h3 { color: var(--text-color); margin-bottom: 1rem; font-size: 1.2rem; }
+        
+        /* Dashboard */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        #countdown .countdown-grid { display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; }
+        .countdown-item { font-size: 2rem; font-weight: 700; } .countdown-item span { display: block; font-size: 0.8rem; color: var(--text-muted); }
+
+        /* Konu Takibi */
+        .subject-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .subject-card { background-color: var(--primary-color); padding: 1rem; border-radius: 8px; }
+        .subject-card progress { width: 100%; margin: 0.5rem 0; }
+        .topic-list { list-style: none; padding-left: 0.5rem; max-height: 250px; overflow-y: auto; }
+        .topic-list li { margin-bottom: 0.5rem; }
+        .topic-list label { display: flex; align-items: center; cursor: pointer; }
+        .topic-list input[type="checkbox"] { margin-right: 0.8rem; }
+        .topic-list input:checked + span { text-decoration: line-through; color: var(--text-muted); }
+
+        /* Deneme Analizi */
+        #deneme-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        #deneme-form input { width: 100%; padding: 0.5rem; background-color: var(--bg-color); border: 1px solid var(--primary-color); color: var(--text-color); border-radius: 5px; }
+        #deneme-form button { background-color: var(--secondary-color); color: white; border: none; padding: 0.8rem; border-radius: 5px; cursor: pointer; grid-column: 1 / -1; }
+        #deneme-history { width: 100%; overflow-x: auto; margin-top: 1.5rem; }
+        #deneme-history table { width: 100%; border-collapse: collapse; }
+        #deneme-history th, #deneme-history td { padding: 0.8rem; text-align: center; border: 1px solid var(--primary-color); }
+        #deneme-history th { background-color: var(--primary-color); }
+        
+        /* Haftalık Plan */
+        .weekly-plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .day-card textarea { width: 100%; min-height: 150px; background-color: var(--bg-color); border: 1px solid var(--primary-color); color: var(--text-color); border-radius: 5px; padding: 0.5rem; }
+
+        /* Ayarlar */
+        .settings-form label { display: block; margin-bottom: 0.5rem; }
+        .settings-form input { padding: 0.5rem; background-color: var(--bg-color); border: 1px solid var(--primary-color); color: var(--text-color); border-radius: 5px; }
+        .settings-form button { background-color: var(--secondary-color); color: white; border: none; padding: 0.8rem; border-radius: 5px; cursor: pointer; margin-top: 1rem; }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <nav>
+            <button class="nav-link active" data-target="dashboard-page">Ana Sayfa</button>
+            <button class="nav-link" data-target="konu-takip-page">Konu Takibi</button>
+            <button class="nav-link" data-target="deneme-analiz-page">Deneme Analizi</button>
+            <button class="nav-link" data-target="haftalik-plan-page">Haftalık Plan</button>
+            <button class="nav-link" data-target="ayarlar-page">Ayarlar</button>
+        </nav>
 
-    <div class="planner-container">
-        <header>
-            <h1>KPSS Önlisans Planlayıcı</h1>
-            <p>Çalışma ve sınav tarihlerini seç, sana özel haftalık ders planın anında hazır olsun!</p>
-        </header>
-        
-        <div class="input-area">
-            <div class="input-group">
-                <label for="baslangicTarihi">Çalışmaya Başlama Tarihi</label>
-                <input type="date" id="baslangicTarihi">
-            </div>
-            <div class="input-group">
-                <label for="sinavTarihi">Sınav Tarihi</label>
-                <input type="date" id="sinavTarihi">
-            </div>
-            <button id="planOlusturBtn">Plan Oluştur</button>
-        </div>
+        <main>
+            <section id="dashboard-page" class="page active">
+                <div class="dashboard-grid">
+                    <div id="countdown" class="widget">
+                        <h2>Sınava Kalan Süre</h2>
+                        <div class="countdown-grid">
+                            <div class="countdown-item"><div id="days">00</div><span>Gün</span></div>
+                            <div class="countdown-item"><div id="hours">00</div><span>Saat</span></div>
+                            <div class="countdown-item"><div id="minutes">00</div><span>Dakika</span></div>
+                            <div class="countdown-item"><div id="seconds">00</div><span>Saniye</span></div>
+                        </div>
+                    </div>
+                    <div class="widget">
+                        <h2>Günün Özeti</h2>
+                        <p id="total-questions-summary" style="font-size: 1.5rem; font-weight: 700; color: var(--secondary-color);">Bugün Toplam: 0 Soru</p>
+                        <p id="quote" style="margin-top: 1rem; font-style: italic; color: var(--text-muted);"></p>
+                    </div>
+                    <div class="widget">
+                         <h2>Bugünkü Görevler</h2>
+                         <input type="text" id="todo-input" placeholder="Yeni görev ekle..." style="width: 100%; padding: 0.5rem; background-color: var(--bg-color); border: 1px solid var(--primary-color); color: var(--text-color); border-radius: 5px; margin-bottom: 1rem;">
+                         <ul id="todo-list" style="list-style: none;"></ul>
+                    </div>
+                </div>
+            </section>
 
-        <div id="planContainer" class="plan-output">
-            <div id="planOzeti"></div>
-            <div id="haftalikPlan">
-                <p class="placeholder">Lütfen tarihleri seçip "Plan Oluştur" butonuna tıklayın.</p>
-            </div>
-        </div>
+            <section id="konu-takip-page" class="page">
+                <h2>Konu Takip Çizelgesi</h2>
+                <div class="subject-grid">
+                    </div>
+            </section>
 
+            <section id="deneme-analiz-page" class="page">
+                <div class="widget">
+                    <h2>Yeni Deneme Ekle</h2>
+                    <form id="deneme-form">
+                        <div>
+                            <label for="deneme-adi">Deneme Adı/No:</label>
+                            <input type="text" id="deneme-adi" required>
+                        </div>
+                        <fieldset style="border:1px solid var(--primary-color); padding:1rem; border-radius:8px;">
+                            <legend>Genel Yetenek</legend>
+                            <label>Türkçe (D/Y/B):</label>
+                            <div style="display:flex; gap:5px;">
+                                <input type="number" class="deneme-input" data-lesson="gy-turkce" placeholder="D" min="0"><input type="number" class="deneme-input" data-lesson="gy-turkce" placeholder="Y" min="0"><input type="number" class="deneme-input" data-lesson="gy-turkce" placeholder="B" min="0">
+                            </div>
+                            <label>Matematik (D/Y/B):</label>
+                            <div style="display:flex; gap:5px;">
+                                <input type="number" class="deneme-input" data-lesson="gy-matematik" placeholder="D" min="0"><input type="number" class="deneme-input" data-lesson="gy-matematik" placeholder="Y" min="0"><input type="number" class="deneme-input" data-lesson="gy-matematik" placeholder="B" min="0">
+                            </div>
+                        </fieldset>
+                        <fieldset style="border:1px solid var(--primary-color); padding:1rem; border-radius:8px;">
+                            <legend>Genel Kültür</legend>
+                             <label>Tarih (D/Y/B):</label>
+                            <div style="display:flex; gap:5px;">
+                                <input type="number" class="deneme-input" data-lesson="gk-tarih" placeholder="D" min="0"><input type="number" class="deneme-input" data-lesson="gk-tarih" placeholder="Y" min="0"><input type="number" class="deneme-input" data-lesson="gk-tarih" placeholder="B" min="0">
+                            </div>
+                             <label>Coğrafya (D/Y/B):</label>
+                            <div style="display:flex; gap:5px;">
+                                <input type="number" class="deneme-input" data-lesson="gk-cografya" placeholder="D" min="0"><input type="number" class="deneme-input" data-lesson="gk-cografya" placeholder="Y" min="0"><input type="number" class="deneme-input" data-lesson="gk-cografya" placeholder="B" min="0">
+                            </div>
+                             <label>Vatandaşlık (D/Y/B):</label>
+                            <div style="display:flex; gap:5px;">
+                                <input type="number" class="deneme-input" data-lesson="gk-vatandaslik" placeholder="D" min="0"><input type="number" class="deneme-input" data-lesson="gk-vatandaslik" placeholder="Y" min="0"><input type="number" class="deneme-input" data-lesson="gk-vatandaslik" placeholder="B" min="0">
+                            </div>
+                        </fieldset>
+                        <button type="submit">Denemeyi Kaydet</button>
+                    </form>
+                </div>
+                <div class="widget">
+                    <h2>Deneme Geçmişi</h2>
+                    <div id="deneme-history"><table></table></div>
+                </div>
+            </section>
+
+            <section id="haftalik-plan-page" class="page">
+                <h2>Haftalık Çalışma Planı</h2>
+                <div class="weekly-plan-grid">
+                    </div>
+            </section>
+
+            <section id="ayarlar-page" class="page">
+                <div class="widget">
+                    <h2>Ayarlar</h2>
+                    <div class="settings-form">
+                        <label for="exam-date">KPSS Sınav Tarihini Ayarla:</label>
+                        <input type="date" id="exam-date">
+                        <button id="save-settings">Ayarları Kaydet</button>
+                        <p id="settings-saved-msg" style="color:var(--secondary-color); margin-top:1rem;"></p>
+                    </div>
+                </div>
+            </section>
+        </main>
     </div>
 
-    <footer>
-        <p>Gemini AI tarafından bir planlama aracı olarak tasarlandı.</p>
-    </footer>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // --- TEMEL YAPI VE VERİLER ---
+    const navLinks = document.querySelectorAll('.nav-link');
+    const pages = document.querySelectorAll('.page');
+    const kpssData = {
+        'Tarih': ['İslamiyet Öncesi Türk Tarihi', 'İlk Müslüman Türk Devletleri', 'Osmanlı Kuruluş ve Yükselme', 'Osmanlı Kültür ve Medeniyeti', 'Osmanlı Duraklama ve Gerileme', 'Osmanlı Dağılma', '20. Yüzyılda Osmanlı', 'Kurtuluş Savaşı Hazırlık', 'Kurtuluş Savaşı Muharebeler', 'İnkılaplar', 'Atatürk Dönemi İç ve Dış Politika', 'Çağdaş Türk ve Dünya Tarihi'],
+        'Coğrafya': ['Türkiye\'nin Coğrafi Konumu', 'Türkiye\'nin Yer Şekilleri ve İklimi', 'Türkiye\'de Nüfus ve Yerleşme', 'Tarım ve Hayvancılık', 'Madenler ve Enerji Kaynakları', 'Sanayi ve Ticaret', 'Ulaşım ve Turizm', 'Bölgeler Coğrafyası'],
+        'Vatandaşlık': ['Temel Hukuk Kavramları', 'Anayasa Hukukuna Giriş', 'Yasama', 'Yürütme', 'Yargı', 'İdare Hukuku', 'İnsan Hakları'],
+        'Türkçe': ['Sözcükte Anlam', 'Cümlede Anlam', 'Paragraf', 'Yazım Kuralları', 'Noktalama İşaretleri', 'Ses Bilgisi', 'Yapı Bilgisi', 'Sözcük Türleri', 'Cümlenin Öğeleri', 'Cümle Türleri', 'Anlatım Bozuklukları', 'Sözel Mantık'],
+        'Matematik': ['Temel Kavramlar', 'Sayılar', 'Bölme ve Bölünebilme', 'OBEB-OKEK', 'Rasyonel Sayılar', 'Basit Eşitsizlikler', 'Mutlak Değer', 'Üslü ve Köklü Sayılar', 'Çarpanlara Ayırma', 'Oran-Orantı', 'Denklem Çözme', 'Problemler', 'Kümeler', 'İşlem ve Modüler Aritmetik', 'Permütasyon ve Olasılık', 'Sayısal Mantık', 'Geometri']
+    };
 
-    <script>
-        // TÜM KPSS ÖNLİSANS KONULARI
-        const konular = [
-            // Türkçe Konuları
-            { konu: "Sözcükte Anlam", ders: "Türkçe" },
-            { konu: "Cümlede Anlam", ders: "Türkçe" },
-            { konu: "Paragrafta Anlam", ders: "Türkçe" },
-            { konu: "Ses Bilgisi", ders: "Türkçe" },
-            { konu: "Yazım Kuralları", ders: "Türkçe" },
-            { konu: "Noktalama İşaretleri", ders: "Türkçe" },
-            { konu: "Sözcük Yapısı (Kökler, Ekler)", ders: "Türkçe" },
-            { konu: "Sözcük Türleri (İsim, Sıfat, Zamir, Zarf)", ders: "Türkçe" },
-            { konu: "Fiiller (Çatı, Kip, Ek Fiil, Fiilimsi)", ders: "Türkçe" },
-            { konu: "Cümlenin Ögeleri", ders: "Türkçe" },
-            { konu: "Cümle Türleri", ders: "Türkçe" },
-            { konu: "Anlatım Bozuklukları", ders: "Türkçe" },
-            { konu: "Sözel Mantık", ders: "Türkçe" },
-            
-            // Matematik Konuları
-            { konu: "Temel Kavramlar (Sayılar)", ders: "Matematik" },
-            { konu: "Bölme ve Bölünebilme Kuralları", ders: "Matematik" },
-            { konu: "Asal Çarpanlara Ayırma, EBOB-EKOK", ders: "Matematik" },
-            { konu: "Rasyonel Sayılar", ders: "Matematik" },
-            { konu: "Basit Eşitsizlikler", ders: "Matematik" },
-            { konu: "Mutlak Değer", ders: "Matematik" },
-            { konu: "Üslü Sayılar", ders: "Matematik" },
-            { konu: "Köklü Sayılar", ders: "Matematik" },
-            { konu: "Çarpanlara Ayırma", ders: "Matematik" },
-            { konu: "Oran - Orantı", ders: "Matematik" },
-            { konu: "Denklem Çözme", ders: "Matematik" },
-            { konu: "Sayı ve Kesir Problemleri", ders: "Matematik" },
-            { konu: "Yaş Problemleri", ders: "Matematik" },
-            { konu: "İşçi - Havuz Problemleri", ders: "Matematik" },
-            { konu: "Yüzde - Kâr - Zarar Problemleri", ders: "Matematik" },
-            { konu: "Karışım Problemleri", ders: "Matematik" },
-            { konu: "Hız - Hareket Problemleri", ders: "Matematik" },
-            { konu: "Kümeler", ders: "Matematik" },
-            { konu: "Fonksiyonlar", ders: "Matematik" },
-            { konu: "Permütasyon, Kombinasyon, Olasılık", ders: "Matematik" },
-            { konu: "Tablo ve Grafik Yorumlama", ders: "Matematik" },
-            { konu: "Sayısal Mantık", ders: "Matematik" },
-            
-            // Tarih Konuları
-            { konu: "İslamiyet Öncesi Türk Tarihi", ders: "Tarih" },
-            { konu: "İlk Müslüman Türk Devletleri", ders: "Tarih" },
-            { konu: "Türkiye Selçuklu Devleti", ders: "Tarih" },
-            { konu: "Osmanlı Devleti Kuruluş Dönemi", ders: "Tarih" },
-            { konu: "Osmanlı Devleti Yükselme Dönemi", ders: "Tarih" },
-            { konu: "Osmanlı Kültür ve Medeniyeti", ders: "Tarih" },
-            { konu: "Osmanlı Duraklama ve Gerileme Dönemi", ders: "Tarih" },
-            { konu: "Osmanlı Dağılma Dönemi ve Islahatlar", ders: "Tarih" },
-            { konu: "20. Yüzyılda Osmanlı (Trablusgarp, Balkan)", ders: "Tarih" },
-            { konu: "I. Dünya Savaşı ve Sonuçları", ders: "Tarih" },
-            { konu: "Milli Mücadele Hazırlık Dönemi", ders: "Tarih" },
-            { konu: "Kurtuluş Savaşı Muharebeler Dönemi", ders: "Tarih" },
-            { konu: "Atatürk İlke ve İnkılapları", ders: "Tarih" },
-            { konu: "Atatürk Dönemi İç ve Dış Politika", ders: "Tarih" },
-            { konu: "Çağdaş Türk ve Dünya Tarihi", ders: "Tarih" },
+    // --- SAYFA NAVİGASYONU ---
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            const target = link.dataset.target;
+            pages.forEach(page => {
+                page.classList.toggle('active', page.id === target);
+            });
+        });
+    });
 
-            // Coğrafya Konuları
-            { konu: "Türkiye'nin Coğrafi Konumu", ders: "Coğrafya" },
-            { konu: "Türkiye'nin Yer Şekilleri", ders: "Coğrafya" },
-            { konu: "Türkiye'nin İklimi ve Bitki Örtüsü", ders: "Coğrafya" },
-            { konu: "Türkiye'de Nüfus ve Yerleşme", ders: "Coğrafya" },
-            { konu: "Türkiye'nin Ekonomik Coğrafyası (Tarım)", ders: "Coğrafya" },
-            { konu: "Türkiye'de Hayvancılık ve Ormancılık", ders: "Coğrafya" },
-            { konu: "Türkiye'de Madenler ve Enerji Kaynakları", ders: "Coğrafya" },
-            { konu: "Türkiye'de Sanayi ve Ticaret", ders: "Coğrafya" },
-            { konu: "Türkiye'de Ulaşım ve Turizm", ders: "Coğrafya" },
-            { konu: "Bölgeler Coğrafyası ve Kalkınma Projeleri", ders: "Coğrafya" },
+    // --- AYARLAR ---
+    const examDateInput = document.getElementById('exam-date');
+    const saveSettingsBtn = document.getElementById('save-settings');
+    const settingsMsg = document.getElementById('settings-saved-msg');
+    let settings = JSON.parse(localStorage.getItem('kpssO_settings')) || { examDate: '2026-08-09' };
+    examDateInput.value = settings.examDate;
 
-            // Vatandaşlık Konuları
-            { konu: "Temel Hukuk Kavramları", ders: "Vatandaşlık" },
-            { konu: "Anayasa Hukukuna Giriş", ders: "Vatandaşlık" },
-            { konu: "1982 Anayasası (Temel İlkeler, Hak ve Ödevler)", ders: "Vatandaşlık" },
-            { konu: "Yasama (TBMM)", ders: "Vatandaşlık" },
-            { konu: "Yürütme (Cumhurbaşkanı)", ders: "Vatandaşlık" },
-            { konu: "Yargı", ders: "Vatandaşlık" },
-            { konu: "İdare Hukuku", ders: "Vatandaşlık" },
-        ];
+    saveSettingsBtn.addEventListener('click', () => {
+        settings.examDate = examDateInput.value;
+        localStorage.setItem('kpssO_settings', JSON.stringify(settings));
+        settingsMsg.textContent = "Ayarlar kaydedildi. Sayfa yenilenince geri sayım güncellenecektir.";
+        setTimeout(() => settingsMsg.textContent = "", 3000);
+    });
 
-        // DOM Elementlerini Seçme
-        const baslangicTarihiInput = document.getElementById('baslangicTarihi');
-        const sinavTarihiInput = document.getElementById('sinavTarihi');
-        const planOlusturBtn = document.getElementById('planOlusturBtn');
-        const planOzetiEl = document.getElementById('planOzeti');
-        const haftalikPlanEl = document.getElementById('haftalikPlan');
+    // --- GERİ SAYIM SAYACI (ANA SAYFA) ---
+    const kpssExamDate = new Date(`${settings.examDate}T10:15:00`).getTime();
+    const countdownInterval = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = kpssExamDate - now;
+        if (distance < 0) {
+            clearInterval(countdownInterval);
+            document.getElementById('countdown').innerHTML = "<h2>Başarılar!</h2>";
+            return;
+        }
+        document.getElementById('days').innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
+        document.getElementById('hours').innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        document.getElementById('minutes').innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        document.getElementById('seconds').innerText = Math.floor((distance % (1000 * 60)) / 1000);
+    }, 1000);
+
+    // --- GÜNLÜK GÖREVLER (ANA SAYFA) ---
+    const todoInput = document.getElementById('todo-input');
+    const todoList = document.getElementById('todo-list');
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const todoStorageKey = `kpssO_todos_${todayStr}`;
+    let todos = JSON.parse(localStorage.getItem(todoStorageKey)) || [];
+
+    const renderTodos = () => {
+        todoList.innerHTML = '';
+        todos.forEach((todo, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span>${todo.text}</span><button style="background:none; border:none; color:var(--secondary-color); cursor:pointer; font-size:1.2rem;">&times;</button>`;
+            if (todo.completed) li.style.textDecoration = 'line-through';
+            li.addEventListener('click', () => { todos[index].completed = !todos[index].completed; saveAndRenderTodos(); });
+            li.querySelector('button').addEventListener('click', (e) => { e.stopPropagation(); todos.splice(index, 1); saveAndRenderTodos(); });
+            todoList.appendChild(li);
+        });
+    };
+    const saveAndRenderTodos = () => { localStorage.setItem(todoStorageKey, JSON.stringify(todos)); renderTodos(); };
+    todoInput.addEventListener('keypress', e => {
+        if (e.key === 'Enter' && todoInput.value.trim()) {
+            todos.push({ text: todoInput.value, completed: false });
+            todoInput.value = '';
+            saveAndRenderTodos();
+        }
+    });
+    renderTodos();
+    
+    // --- MOTİVASYON SÖZÜ (ANA SAYFA) ---
+    const quotes = ["Başarının sırrı, başlamaktır.", "Bugünün tekrarı, yarının netidir.", "Unutma, her net bir adımdır."];
+    document.getElementById('quote').textContent = quotes[Math.floor(Math.random() * quotes.length)];
+
+    // --- KONU TAKİBİ ---
+    const subjectGrid = document.querySelector('#konu-takip-page .subject-grid');
+    let topicProgress = JSON.parse(localStorage.getItem('kpssO_topicProgress')) || {};
+
+    Object.keys(kpssData).forEach(subject => {
+        const card = document.createElement('div');
+        card.className = 'subject-card';
+        const topicListHTML = kpssData[subject].map((topic, index) => {
+            const topicId = `${subject}-${index}`;
+            const isChecked = topicProgress[topicId] ? 'checked' : '';
+            return `<li><label><input type="checkbox" data-id="${topicId}" ${isChecked}><span>${topic}</span></label></li>`;
+        }).join('');
         
-        // Başlangıç tarihlerini bugünden başlat ve sınav tarihini 2026'ya ayarla
-        const bugun = new Date();
-        const sinavTarihiDefault = new Date('2026-09-20'); // Bir sonraki sınav için tahmini tarih
-        baslangicTarihiInput.value = bugun.toISOString().split('T')[0];
-        sinavTarihiInput.value = sinavTarihiDefault.toISOString().split('T')[0];
+        card.innerHTML = `<h3>${subject}</h3><progress value="0" max="100"></progress><p class="progress-text">0%</p><ul class="topic-list">${topicListHTML}</ul>`;
+        subjectGrid.appendChild(card);
+    });
 
-        planOlusturBtn.addEventListener('click', () => {
-            const baslangicTarihi = new Date(baslangicTarihiInput.value);
-            const sinavTarihi = new Date(sinavTarihiInput.value);
-
-            if (isNaN(baslangicTarihi) || isNaN(sinavTarihi)) {
-                alert('Lütfen geçerli tarihler seçin.');
-                return;
-            }
-
-            if (baslangicTarihi >= sinavTarihi) {
-                alert('Başlangıç tarihi, sınav tarihinden önce olmalıdır.');
-                return;
-            }
-
-            const gunFarki = (sinavTarihi - baslangicTarihi) / (1000 * 60 * 60 * 24);
-            const haftaSayisi = Math.ceil(gunFarki / 7);
-            const haftalikKonuSayisi = Math.ceil(konular.length / haftaSayisi);
-            
-            // Özet bilgisini göster
-            planOzetiEl.innerHTML = `
-                <h3>Plan Detayları</h3>
-                <p>Toplam <strong>${haftaSayisi}</strong> hafta boyunca, haftada ortalama <strong>${haftalikKonuSayisi}</strong> konu çalışarak programı tamamlayabilirsiniz.</p>
-            `;
-
-            // Haftalık planı oluştur
-            haftalikPlanEl.innerHTML = '';
-            let konuIndex = 0;
-
-            for (let i = 1; i <= haftaSayisi; i++) {
-                const haftaCard = document.createElement('div');
-                haftaCard.classList.add('hafta-card');
-
-                const haftaBasligi = document.createElement('h3');
-                haftaBasligi.innerText = `${i}. Hafta`;
-                haftaCard.appendChild(haftaBasligi);
-
-                const konuListesi = document.createElement('ul');
-                for (let j = 0; j < haftalikKonuSayisi && konuIndex < konular.length; j++) {
-                    const konu = konular[konuIndex];
-                    const listItem = document.createElement('li');
-                    
-                    const dersEtiketiClass = konu.ders.toLowerCase().replace(' ', '-');
-
-                    listItem.innerHTML = `
-                        <label>
-                            <input type="checkbox">
-                            <span>${konu.konu}</span>
-                        </label>
-                        <span class="ders-etiketi ${dersEtiketiClass}">${konu.ders}</span>
-                    `;
-                    konuListesi.appendChild(listItem);
-                    konuIndex++;
-                }
-                haftaCard.appendChild(konuListesi);
-                haftalikPlanEl.appendChild(haftaCard);
+    const updateProgress = () => {
+        Object.keys(kpssData).forEach(subject => {
+            const topics = kpssData[subject];
+            const checkedCount = topics.filter((t, i) => topicProgress[`${subject}-${i}`]).length;
+            const progress = topics.length > 0 ? Math.round((checkedCount / topics.length) * 100) : 0;
+            const card = [...subjectGrid.children].find(c => c.querySelector('h3').textContent === subject);
+            if(card) {
+                card.querySelector('progress').value = progress;
+                card.querySelector('.progress-text').textContent = `${progress}% tamamlandı.`;
             }
         });
-        
-        // Çalışılan konuyu işaretleme (event delegation)
-        haftalikPlanEl.addEventListener('change', (e) => {
-            if (e.target.type === 'checkbox') {
-                const listItem = e.target.closest('li');
-                listItem.classList.toggle('tamamlandi', e.target.checked);
-            }
+    };
+
+    subjectGrid.addEventListener('change', e => {
+        if (e.target.type === 'checkbox') {
+            topicProgress[e.target.dataset.id] = e.target.checked;
+            localStorage.setItem('kpssO_topicProgress', JSON.stringify(topicProgress));
+            updateProgress();
+        }
+    });
+    updateProgress();
+
+    // --- DENEME ANALİZİ ---
+    const denemeForm = document.getElementById('deneme-form');
+    const denemeHistoryDiv = document.getElementById('deneme-history');
+    let denemeHistory = JSON.parse(localStorage.getItem('kpssO_denemeHistory')) || [];
+
+    const renderDenemeHistory = () => {
+        let tableHTML = '<table><tr><th>Deneme</th><th>Toplam Net</th><th>GY Net</th><th>GK Net</th></tr>';
+        denemeHistory.forEach(deneme => {
+            tableHTML += `<tr><td>${deneme.name}</td><td>${deneme.totalNet.toFixed(2)}</td><td>${deneme.gyNet.toFixed(2)}</td><td>${deneme.gkNet.toFixed(2)}</td></tr>`;
         });
+        tableHTML += '</table>';
+        denemeHistoryDiv.innerHTML = tableHTML;
+    };
 
-    </script>
+    denemeForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const inputs = e.target.querySelectorAll('.deneme-input');
+        const results = {};
+        let allValues = [];
+        inputs.forEach((input, index) => allValues[index] = Number(input.value) || 0);
+        
+        const calculateNet = (d, y) => d - (y / 4);
+        
+        const gyTurkceNet = calculateNet(allValues[0], allValues[1]);
+        const gyMatNet = calculateNet(allValues[3], allValues[4]);
+        const gkTarNet = calculateNet(allValues[6], allValues[7]);
+        const gkCogNet = calculateNet(allValues[9], allValues[10]);
+        const gkVatNet = calculateNet(allValues[12], allValues[13]);
+        
+        const gyNet = gyTurkceNet + gyMatNet;
+        const gkNet = gkTarNet + gkCogNet + gkVatNet;
+        
+        denemeHistory.push({
+            name: document.getElementById('deneme-adi').value,
+            gyNet: gyNet, gkNet: gkNet, totalNet: gyNet + gkNet
+        });
+        localStorage.setItem('kpssO_denemeHistory', JSON.stringify(denemeHistory));
+        renderDenemeHistory();
+        denemeForm.reset();
+    });
+    renderDenemeHistory();
 
+    // --- HAFTALIK PLAN ---
+    const weeklyPlanGrid = document.querySelector('#haftalik-plan-page .weekly-plan-grid');
+    const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'];
+    let weeklyPlan = JSON.parse(localStorage.getItem('kpssO_weeklyPlan')) || {};
+
+    days.forEach(day => {
+        const dayCard = document.createElement('div');
+        dayCard.className = 'day-card widget';
+        dayCard.innerHTML = `<h3>${day}</h3><textarea data-day="${day}" placeholder="Hedeflerini yaz..."></textarea>`;
+        const textarea = dayCard.querySelector('textarea');
+        textarea.value = weeklyPlan[day] || '';
+        textarea.addEventListener('input', () => {
+            weeklyPlan[day] = textarea.value;
+            localStorage.setItem('kpssO_weeklyPlan', JSON.stringify(weeklyPlan));
+        });
+        weeklyPlanGrid.appendChild(dayCard);
+    });
+});
+</script>
 </body>
 </html>
