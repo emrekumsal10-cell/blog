@@ -1,268 +1,182 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malatya: Güneşin ve Tarihin Başkenti</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #0d0d0d;
-            color: #f0f0f0;
-            overflow-x: hidden;
-        }
-        .font-serif { font-family: 'Playfair Display', serif; }
-
-        /* Preloader */
-        #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0d0d0d; z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease-out, visibility 0.5s ease-out; }
-        .loader { width: 50px; aspect-ratio: 1; border-radius: 50%; border: 8px solid #FFA500; border-right-color: #0d0d0d; animation: spin 1s infinite linear; }
-        @keyframes spin { to { transform: rotate(1turn); } }
-
-        /* Navbar */
-        #navbar { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; transition: background-color 0.4s ease-out, transform 0.4s ease-out; transform: translateY(-100%); }
-        #navbar.scrolled { background-color: rgba(13, 13, 13, 0.8); backdrop-filter: blur(10px); transform: translateY(0); }
-
-        /* Hero */
-        .hero { height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .hero-video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; object-fit: cover; transform: translate(-50%, -50%); z-index: -2; }
-        .hero::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at center, rgba(13, 13, 13, 0.4) 0%, rgba(13, 13, 13, 0.95) 100%); z-index: -1; }
-        .hero-title { animation: fadeInText 3s ease-in-out forwards; }
-        @keyframes fadeInText { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .scroll-down { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); } 40% { transform: translate(-50%, -20px); } 60% { transform: translate(-50%, -10px); } }
-
-        /* Parallax */
-        .parallax { background-attachment: fixed; background-position: center; background-repeat: no-repeat; background-size: cover; position: relative; }
-        .parallax::before { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0, 0.6); }
-        .content-section { position: relative; z-index: 1; }
-
-        /* Scroll reveal */
-        .scroll-reveal { opacity: 0; transform: translateY(60px); transition: opacity 1s ease-out, transform 1s ease-out; }
-        .scroll-reveal.visible { opacity: 1; transform: translateY(0); }
-
-        /* Timeline */
-        .timeline-item::before { content: ''; position: absolute; top: 20px; left: -30px; width: 20px; height: 20px; background-color: #FFA500; border-radius: 50%; border: 4px solid #111; z-index: 1; }
-        .timeline { border-left: 2px solid #FFA500; }
-
-        /* Gallery */
-        .gallery-item { transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
-        .gallery-item:hover { transform: translateY(-15px) scale(1.03); box-shadow: 0 25px 50px -12px rgba(255, 165, 0, 0.2); }
-
-        /* Map */
-        .map-dot { transition: all 0.3s ease; }
-        .map-dot:hover { transform: scale(2.5); background-color: #FFD700; }
-
-        /* Video Modal */
-        .video-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 10000; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease; }
-        .video-modal.open { opacity: 1; visibility: visible; }
-        .video-modal-content { position: relative; width: 90%; max-width: 960px; aspect-ratio: 16 / 9; }
-        .video-modal-close { position: absolute; top: -40px; right: 0; font-size: 2rem; color: white; cursor: pointer; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Malatya: Güneşin ve Tarihin Başkenti</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { background-color: #0a0a0a; color: #f5f5f5; font-family: Calibri, sans-serif; }
+    .nav-link { transition: color 0.3s ease; }
+    .nav-link:hover { color: #fbbf24; }
+    .scroll-reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s ease; }
+    .scroll-reveal.visible { opacity: 1; transform: translateY(0); }
+    .video-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 50; }
+    .video-modal.open { display: flex; }
+    .video-modal-content { width: 90%; max-width: 900px; aspect-ratio: 16/9; background: #000; position: relative; }
+    .video-modal-close { position: absolute; top: 10px; right: 10px; cursor: pointer; font-size: 24px; color: #fff; }
+    #preloader { position: fixed; inset: 0; background: #000; display: flex; justify-content: center; align-items: center; z-index: 100; }
+    #preloader span { width: 50px; height: 50px; border: 5px solid #fbbf24; border-top: 5px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    header { position: fixed; top: 0; left: 0; width: 100%; z-index: 40; transition: background 0.3s ease; }
+    header.scrolled { background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); }
+  </style>
 </head>
-<body class="bg-black">
-    
-    <!-- PRELOADER -->
-    <div id="preloader">
-        <div class="loader"></div>
-    </div>
+<body class="overflow-x-hidden">
 
-    <!-- NAVBAR -->
-    <nav id="navbar" class="p-4">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <a href="#" class="font-serif text-2xl font-bold text-white">Malatya</a>
-            <div class="hidden md:flex space-x-8 text-lg">
-                <a href="#tarih" class="hover:text-amber-400 transition-colors">Tarihçe</a>
-                <a href="#kayisi" class="hover:text-amber-400 transition-colors">Kayısı</a>
-                <a href="#kesfet" class="hover:text-amber-400 transition-colors">Keşfet</a>
-            </div>
-        </div>
+  <!-- Preloader -->
+  <div id="preloader"><span></span></div>
+
+  <!-- Navbar -->
+  <header id="navbar" class="py-4 px-6 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-amber-400">Malatya</h1>
+    <nav class="space-x-6">
+      <a href="#hakkinda" class="nav-link">Hakkında</a>
+      <a href="#kesfet" class="nav-link">Saklı Cennetler</a>
+      <a href="#iletisim" class="nav-link">İletişim</a>
     </nav>
+  </header>
 
-    <!-- HERO SECTION -->
-    <header class="hero text-white text-center">
-        <video autoplay muted loop class="hero-video" poster="https://i.ytimg.com/vi/3Z-3j2g-d8k/maxresdefault.jpg">
-            <source src="https://cdn.coverr.co/videos/coverr-golden-sunset-over-mountains-2175/1080p.mp4" type="video/mp4">
-        </video>
-        <div class="z-10">
-            <h1 class="hero-title font-serif text-5xl md:text-8xl font-extrabold tracking-tight">
-                <span class="block">GÜNEŞİN DOĞDUĞU</span>
-                <span class="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-400 to-amber-500 mt-2">ALTIN ŞEHİR</span>
-            </h1>
-            <p class="mt-6 text-lg md:text-xl max-w-2xl mx-auto opacity-80 hero-title" style="animation-delay: 0.5s;">Tarihin derinliklerinden gelen bir miras, kayısının anavatanı Malatya'yı keşfedin.</p>
-        </div>
-        <a href="#tarih" class="scroll-down text-2xl"><i class="fa-solid fa-chevron-down"></i></a>
-    </header>
-
-    <!-- MAIN CONTENT -->
-    <main>
-
-        <!-- TARIH SECTION -->
-        <section id="tarih" class="py-20 px-6 bg-[#111]">
-            <div class="max-w-6xl mx-auto">
-                <div class="text-center mb-16 scroll-reveal">
-                    <h2 class="font-serif text-4xl md:text-6xl font-bold">Bir Medeniyet Destanı</h2>
-                    <p class="mt-4 text-lg text-gray-400">Arslantepe'den bugüne uzanan 7000 yıllık serüven.</p>
-                </div>
-                <div class="grid md:grid-cols-2 gap-12">
-                    <div class="timeline relative pl-8">
-                        <div class="timeline-item mb-16 pl-8 scroll-reveal">
-                            <h3 class="font-serif text-3xl font-bold text-amber-400">M.Ö. 5000 | Arslantepe</h3>
-                            <p class="mt-2 text-gray-300">Anadolu'da ilk şehir devletinin doğduğu, UNESCO Dünya Mirası listesindeki höyük.</p>
-                        </div>
-                        <div class="timeline-item mb-16 pl-8 scroll-reveal">
-                            <h3 class="font-serif text-3xl font-bold text-amber-400">1071 | Türk Yurdu</h3>
-                            <p class="mt-2 text-gray-300">Malazgirt Zaferi sonrası Danişmentliler tarafından fethedildi.</p>
-                        </div>
-                        <div class="timeline-item pl-8 scroll-reveal">
-                            <h3 class="font-serif text-3xl font-bold text-amber-400">1923 | Cumhuriyet'in İnşası</h3>
-                            <p class="mt-2 text-gray-300">Atatürk Evi, Cumhuriyet tarihinde önemli bir yere sahiptir.</p>
-                        </div>
-                    </div>
-                    <div class="space-y-6 scroll-reveal">
-                        <img src="https://cdnuploads.aa.com.tr/uploads/Contents/2021/07/26/thumbs_b_c_c8d86f42f2dd2c53ff1990979d3465ab.jpg" alt="Arslantepe Höyüğü" class="rounded-lg shadow-lg">
-                        <img src="https://cdn.gokonya.com/news/41343.jpg" alt="Battalgazi Ulu Camii" class="rounded-lg shadow-lg">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- PARALLAX SECTION 1 -->
-        <section id="kayisi" class="parallax py-40" style="background-image: url('https://www.malatyahaber.com/wp-content/uploads/2021/07/kayisi-hasat.jpg');">
-             <div class="content-section max-w-4xl mx-auto text-center px-6">
-                 <h2 class="font-serif text-5xl md:text-7xl font-extrabold text-white drop-shadow-2xl scroll-reveal">Güneşin Altın Yumurtası</h2>
-                 <p class="text-xl md:text-2xl mt-6 text-white font-semibold drop-shadow-lg scroll-reveal" style="transition-delay: 200ms;">Dünyanın kayısı başkentinden, damaklarda iz bırakan eşsiz bir lezzet.</p>
-             </div>
-        </section>
-
-        <!-- KAYISI GALLERY -->
-        <section class="py-20 px-6 bg-black">
-            <div class="max-w-7xl mx-auto">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="gallery-item rounded-lg overflow-hidden scroll-reveal">
-                        <img src="https://st2.myideasoft.com/idea/gn/35/myassets/products/126/sekerpare-kayisi.jpg" alt="Taze Kayısı" class="w-full h-96 object-cover">
-                    </div>
-                    <div class="gallery-item rounded-lg overflow-hidden scroll-reveal" style="transition-delay: 150ms;">
-                        <img src="https://www.malatyastore.com/gun-kurusu-kayisi-gun-kurusu-kayisi-malatya-pazari-365-15-B.jpg" alt="Kuru Kayısı" class="w-full h-96 object-cover">
-                    </div>
-                    <div class="gallery-item rounded-lg overflow-hidden scroll-reveal" style="transition-delay: 300ms;">
-                        <img src="https://st.myideasoft.com/idea/fx/20/myassets/products/139/kayisi-cekirdegi-ici-2.jpg" alt="Kayısı Çekirdeği" class="w-full h-96 object-cover">
-                    </div>
-                    <div class="gallery-item rounded-lg overflow-hidden scroll-reveal" style="transition-delay: 450ms;">
-                        <img src="https://cdn.yemek.com/mnresize/1250/833/uploads/2015/07/kaymakli-kayisi-tatlisi-onecikan.jpg" alt="Kayısı Tatlısı" class="w-full h-96 object-cover">
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- PARALLAX SECTION 2 -->
-        <section class="parallax py-40" style="background-image: url('https://www.kulturportali.gov.tr/repoKulturPortali/large/Malatya/GezilecekYer/leventvadisi_20180126142646399.JPG');">
-             <div class="content-section max-w-4xl mx-auto text-center px-6">
-                 <h2 class="font-serif text-5xl md:text-7xl font-extrabold text-white drop-shadow-2xl scroll-reveal">Levent Vadisi'nin Büyüsü</h2>
-                 <p class="text-xl md:text-2xl mt-6 text-white font-semibold drop-shadow-lg scroll-reveal" style="transition-delay: 200ms;">Milyonlarca yıllık jeolojik oluşumların arasında nefes kesen bir macera.</p>
-                 <button id="play-video-btn" class="mt-8 bg-amber-500 text-black font-bold py-3 px-8 rounded-full text-lg hover:bg-amber-400 transition-all transform hover:scale-105 scroll-reveal" style="transition-delay: 400ms;">
-                    <i class="fa-solid fa-play mr-2"></i> Videoyu İzle
-                 </button>
-             </div>
-        </section>
-
-        <!-- HIDDEN GEMS -->
-        <section id="kesfet" class="py-20 px-6 bg-[#111]">
-            <div class="max-w-6xl mx-auto text-center">
-                <h2 class="font-serif text-4xl md:text-6xl font-bold scroll-reveal">Saklı Cennetler</h2>
-                <p class="mt-4 text-lg text-gray-400 mb-12 scroll-reveal">Malatya'nın gizli kalmış güzelliklerini görselleriyle keşfedin.</p>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
-                        <img src="https://www.malatyagezi.com/wp-content/uploads/2019/04/gunpinar-selalesi.jpg" alt="Günpınar Şelalesi" class="w-full h-64 object-cover">
-                        <div class="p-4 bg-black">
-                            <h3 class="text-amber-400 font-bold text-xl">Günpınar Şelalesi</h3>
-                            <p class="text-gray-300">Darende ilçesinde, doğanın mucizevi hediyesi.</p>
-                        </div>
-                    </div>
-                    <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
-                        <img src="https://www.kulturportali.gov.tr/contents/images/il/44/malatya/silahtar-mustafa-pasa-kervansarayi(4).jpg" alt="Silahtar Mustafa Paşa Kervansarayı" class="w-full h-64 object-cover">
-                        <div class="p-4 bg-black">
-                            <h3 class="text-amber-400 font-bold text-xl">Silahtar Mustafa Paşa Kervansarayı</h3>
-                            <p class="text-gray-300">Osmanlı'dan günümüze ulaşan tarihi han.</p>
-                        </div>
-                    </div>
-                    <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
-                        <img src="https://www.kulturportali.gov.tr/contents/images/il/44/malatya/tohma-kanyonu.jpg" alt="Tohma Kanyonu" class="w-full h-64 object-cover">
-                        <div class="p-4 bg-black">
-                            <h3 class="text-amber-400 font-bold text-xl">Tohma Kanyonu</h3>
-                            <p class="text-gray-300">Kaya oluşumları ve serin atmosferiyle ünlü.</p>
-                        </div>
-                    </div>
-                    <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
-                        <img src="https://cdnuploads.aa.com.tr/uploads/Contents/2021/07/27/thumbs_b_c_6ec8de3d3780fb6db9e7bf2cb4e3d34b.jpg" alt="Nemrut Dağı" class="w-full h-64 object-cover">
-                        <div class="p-4 bg-black">
-                            <h3 class="text-amber-400 font-bold text-xl">Nemrut Dağı</h3>
-                            <p class="text-gray-300">Kommagene Krallığı'nın anıtsal kalıntıları.</p>
-                        </div>
-                    </div>
-                    <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
-                        <img src="https://www.kulturportali.gov.tr/contents/images/il/44/malatya/battalgazi-ulu-camii.jpg" alt="Battalgazi Ulu Camii" class="w-full h-64 object-cover">
-                        <div class="p-4 bg-black">
-                            <h3 class="text-amber-400 font-bold text-xl">Battalgazi Ulu Camii</h3>
-                            <p class="text-gray-300">Anadolu Selçuklu mimarisinin şaheseri.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-    
-    <footer class="text-center py-10 bg-black border-t border-gray-900">
-        <p class="text-gray-500">Bu web sitesi, bir şehre olan hayranlığın dijital bir yansımasıdır.</p>
-    </footer>
-
-    <!-- VIDEO MODAL -->
-    <div id="video-modal" class="video-modal">
-        <div class="video-modal-content">
-            <i id="close-modal-btn" class="fa-solid fa-times video-modal-close"></i>
-            <iframe id="youtube-player" width="100%" height="100%" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
+  <!-- Hero -->
+  <section class="relative h-screen flex justify-center items-center text-center">
+    <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover">
+      <source src="https://videos.pexels.com/video-files/857195/857195-hd_1920_1080_25fps.mp4" type="video/mp4">
+    </video>
+    <div class="absolute inset-0 bg-black/60"></div>
+    <div class="relative z-10 px-6">
+      <h2 class="text-4xl md:text-6xl font-bold mb-6">Güneşin ve Tarihin Başkenti</h2>
+      <button id="play-video-btn" class="px-6 py-3 bg-amber-500 text-black font-bold rounded-lg shadow-lg hover:bg-amber-400 transition">
+        <i class="fa-solid fa-play mr-2"></i>Tanıtım Videosunu İzle
+      </button>
     </div>
+  </section>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Preloader
-            const preloader = document.getElementById('preloader');
-            window.addEventListener('load', () => {
-                preloader.style.opacity = '0';
-                preloader.style.visibility = 'hidden';
-            });
+  <!-- Hakkında -->
+  <section id="hakkinda" class="py-20 px-6 bg-[#111]">
+    <div class="max-w-4xl mx-auto text-center scroll-reveal">
+      <h2 class="font-serif text-4xl md:text-6xl font-bold">Hakkında</h2>
+      <p class="mt-6 text-lg text-gray-400">
+        Malatya, tarihiyle, doğasıyla ve kayısısıyla Anadolu’nun incilerinden biridir.
+      </p>
+    </div>
+  </section>
 
-            // Navbar
-            const navbar = document.getElementById('navbar');
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) navbar.classList.add('scrolled');
-                else navbar.classList.remove('scrolled');
-            });
+  <!-- Saklı Cennetler -->
+  <section id="kesfet" class="py-20 px-6 bg-[#111]">
+    <div class="max-w-6xl mx-auto text-center">
+      <h2 class="font-serif text-4xl md:text-6xl font-bold scroll-reveal">Saklı Cennetler</h2>
+      <p class="mt-4 text-lg text-gray-400 mb-12 scroll-reveal">Malatya'nın gizli kalmış güzelliklerini görselleriyle ve konumlarıyla keşfedin.</p>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <!-- Günpınar Şelalesi -->
+        <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/G%C3%9CNPINAR_%C5%9EELALES%C4%B0_-_DARENDE_-_panoramio.jpg" alt="Günpınar Şelalesi" class="w-full h-64 object-cover">
+          <div class="p-4 bg-black">
+            <h3 class="text-amber-400 font-bold text-xl">Günpınar Şelalesi</h3>
+            <p class="text-gray-300">Darende, Malatya – 38.555855° N, 37.423248° E</p>
+          </div>
+        </div>
 
-            // Scroll Reveal
-            const revealElements = document.querySelectorAll('.scroll-reveal');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
-            }, { threshold: 0.1 });
-            revealElements.forEach(el => observer.observe(el));
+        <!-- Nemrut Dağı -->
+        <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
+          <img src="https://images.unsplash.com/photo-1607166534667-fbb6d870a9a6?auto=format&fit=crop&w=800&q=80" alt="Nemrut Dağı" class="w-full h-64 object-cover">
+          <div class="p-4 bg-black">
+            <h3 class="text-amber-400 font-bold text-xl">Nemrut Dağı</h3>
+            <p class="text-gray-300">Kahta, Adıyaman – 37.7400° N, 38.5333° E</p>
+          </div>
+        </div>
 
-            // Video Modal
-            const videoModal = document.getElementById('video-modal');
-            const playBtn = document.getElementById('play-video-btn');
-            const closeBtn = document.getElementById('close-modal-btn');
-            const youtubePlayer = document.getElementById('youtube-player');
-            const videoId = '8i8E2v4hJ2s';
-            playBtn.addEventListener('click', () => {
-                youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-                videoModal.classList.add('open');
-            });
-            const closeModal = () => { youtubePlayer.src = ''; videoModal.classList.remove('open'); };
-            closeBtn.addEventListener('click', closeModal);
-            videoModal.addEventListener('click', (e) => { if (e.target === videoModal) closeModal(); });
-        });
-    </script>
+        <!-- Nemrut Heykelleri -->
+        <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
+          <img src="https://images.unsplash.com/photo-1614436168316-bf6a79a7a1ef?auto=format&fit=crop&w=800&q=80" alt="Nemrut Heykelleri" class="w-full h-64 object-cover">
+          <div class="p-4 bg-black">
+            <h3 class="text-amber-400 font-bold text-xl">Nemrut Heykelleri</h3>
+            <p class="text-gray-300">Adıyaman – Doğu Terası</p>
+          </div>
+        </div>
+
+        <!-- Silahtar Mustafa Paşa Kervansarayı -->
+        <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/4/47/Silahtar_Mustafa_Pasa_Kervansarayi_-_Malatya.jpg" alt="Silahtar Mustafa Paşa Kervansarayı" class="w-full h-64 object-cover">
+          <div class="p-4 bg-black">
+            <h3 class="text-amber-400 font-bold text-xl">Silahtar Mustafa Paşa Kervansarayı</h3>
+            <p class="text-gray-300">Battalgazi, Malatya – 38.4376° N, 38.3556° E</p>
+          </div>
+        </div>
+
+        <!-- Arslantepe Höyüğü -->
+        <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/f/f6/Arslantepe_H%C3%B6y%C3%BC%C4%9F%C3%BC%2C_Malatya.jpg" alt="Arslantepe Höyüğü" class="w-full h-64 object-cover">
+          <div class="p-4 bg-black">
+            <h3 class="text-amber-400 font-bold text-xl">Arslantepe Höyüğü</h3>
+            <p class="text-gray-300">Orduzu, Malatya – 38.3741° N, 38.4236° E</p>
+          </div>
+        </div>
+
+        <!-- Battalgazi Ulu Camii -->
+        <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Battalgazi_Ulu_Camii_-_Malatya.jpg" alt="Battalgazi Ulu Camii" class="w-full h-64 object-cover">
+          <div class="p-4 bg-black">
+            <h3 class="text-amber-400 font-bold text-xl">Battalgazi Ulu Camii</h3>
+            <p class="text-gray-300">Battalgazi, Malatya – 38.4479° N, 38.3573° E</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="iletisim" class="text-center py-10 bg-black border-t border-gray-900">
+    <p class="text-gray-500">Bu web sitesi, Malatya'nın kültürel ve doğal mirasına adanmıştır.</p>
+  </footer>
+
+  <!-- Video Modal -->
+  <div id="video-modal" class="video-modal">
+    <div class="video-modal-content">
+      <i id="close-modal-btn" class="fa-solid fa-times video-modal-close"></i>
+      <iframe id="youtube-player" width="100%" height="100%" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Preloader
+      const preloader = document.getElementById('preloader');
+      window.addEventListener('load', () => {
+        preloader.style.opacity = '0';
+        preloader.style.visibility = 'hidden';
+      });
+
+      // Navbar
+      const navbar = document.getElementById('navbar');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) navbar.classList.add('scrolled');
+        else navbar.classList.remove('scrolled');
+      });
+
+      // Scroll Reveal
+      const revealElements = document.querySelectorAll('.scroll-reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+      }, { threshold: 0.1 });
+      revealElements.forEach(el => observer.observe(el));
+
+      // Video Modal
+      const videoModal = document.getElementById('video-modal');
+      const playBtn = document.getElementById('play-video-btn');
+      const closeBtn = document.getElementById('close-modal-btn');
+      const youtubePlayer = document.getElementById('youtube-player');
+      const videoId = '8i8E2v4hJ2s';
+      playBtn.addEventListener('click', () => {
+        youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        videoModal.classList.add('open');
+      });
+      const closeModal = () => { youtubePlayer.src = ''; videoModal.classList.remove('open'); };
+      closeBtn.addEventListener('click', closeModal);
+      videoModal.addEventListener('click', (e) => { if (e.target === videoModal) closeModal(); });
+    });
+  </script>
 </body>
 </html>
