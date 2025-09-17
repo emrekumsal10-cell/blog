@@ -3,253 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yapay Zeka Destekli Matematik Çözücü</title>
-    
-    <!-- Tailwind CSS -->
+    <title>Dosya Paylaşım Platformu</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- React & Babel for JSX -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <!-- KaTeX for Math Rendering -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMeaMurDcGPPníSKSFdKZWxaxG4kvJIMwpA_psDAAPjUSUGah" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
-    
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8; /* Light blue-gray background */
         }
-        .katex-display {
-            overflow-x: auto;
-            overflow-y: hidden;
-            padding: 0.5rem 0;
+        .drag-over {
+            border-color: #3b82f6; /* blue-500 */
+            background-color: #1f2937; /* gray-800 */
+        }
+        .toast {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-900 text-slate-200">
 
-    <div id="root"></div>
-
-    <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
-
-    // Component to render math formulas using KaTeX
-    const MathRenderer = ({ text }) => {
-        const parts = text.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$)/g);
-
-        return (
-            <div className="prose max-w-none text-gray-800">
-                {parts.map((part, index) => {
-                    if (part.startsWith('$$') && part.endsWith('$$')) {
-                        const math = part.substring(2, part.length - 2);
-                        const html = katex.renderToString(math, { throwOnError: false, displayMode: true });
-                        return <div key={index} dangerouslySetInnerHTML={{ __html: html }} />;
-                    } else if (part.startsWith('$') && part.endsWith('$')) {
-                        const math = part.substring(1, part.length - 1);
-                        const html = katex.renderToString(math, { throwOnError: false, displayMode: false });
-                        return <span key={index} dangerouslySetInnerHTML={{ __html: html }} />;
-                    }
-                    return <span key={index}>{part}</span>;
-                })}
-            </div>
-        );
-    };
-
-
-    const App = () => {
-        const [image, setImage] = useState(null);
-        const [imageBase64, setImageBase64] = useState('');
-        const [solution, setSolution] = useState('');
-        const [isLoading, setIsLoading] = useState(false);
-        const [error, setError] = useState('');
-        const fileInputRef = useRef(null);
-
-        const handleImageChange = (file) => {
-            if (file && file.type.startsWith('image/')) {
-                setImage(file);
-                setError('');
-                setSolution('');
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    setImageBase64(reader.result.split(',')[1]); // Get only base64 data
-                };
-                reader.readAsDataURL(file);
-            } else {
-                setError('Lütfen geçerli bir resim dosyası seçin.');
-                setImage(null);
-                setImageBase64('');
-            }
-        };
-        
-        const handleFileSelect = (event) => {
-            const file = event.target.files[0];
-            handleImageChange(file);
-        };
-        
-        const handleDrop = (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            const file = event.dataTransfer.files[0];
-            handleImageChange(file);
-        };
-
-        const handleDragOver = (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-        };
-
-        const removeImage = () => {
-            setImage(null);
-            setImageBase64('');
-            setSolution('');
-        };
-        
-        const solveProblem = async () => {
-            if (!imageBase64) {
-                setError('Lütfen önce bir resim yükleyin.');
-                return;
-            }
-
-            setIsLoading(true);
-            setError('');
-            setSolution('');
-
-            const apiKey = ""; // API Key will be injected by the environment.
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-            const payload = {
-                contents: [
-                    {
-                        parts: [
-                            { text: "Bu resimdeki matematik problemini adım adım, detaylı bir şekilde açıkla ve çöz. Sonucu belirgin bir şekilde belirt. Matematiksel ifadeler için LaTeX formatı kullan (örneğin, $x^2 + y^2 = z^2$ veya $$ \int a^x dx = \frac{a^x}{\ln a} + C $$ gibi)." },
-                            {
-                                inlineData: {
-                                    mimeType: image.type,
-                                    data: imageBase64
-                                }
-                            }
-                        ]
-                    }
-                ]
-            };
+    <!-- Ana Konteyner -->
+    <div class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
+        <div class="w-full max-w-4xl mx-auto">
             
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+            <!-- Başlık Alanı -->
+            <header class="text-center mb-8">
+                <h1 class="text-4xl sm:text-5xl font-bold text-white mb-2">Dosya Yükle ve Paylaş</h1>
+                <p class="text-lg text-slate-400">Dosyalarınızı kolayca yükleyin ve anında paylaşım linki oluşturun.</p>
+            </header>
 
-                if (!response.ok) {
-                    throw new Error(`API hatası: ${response.status} ${response.statusText}`);
-                }
-
-                const result = await response.json();
-                const candidate = result.candidates?.[0];
-
-                if (candidate && candidate.content?.parts?.[0]?.text) {
-                    setSolution(candidate.content.parts[0].text);
-                } else {
-                    const safetyMessage = candidate?.finishReason === 'SAFETY' ? 'İçerik güvenlik politikalarını ihlal ediyor.' : 'Geçerli bir çözüm bulunamadı.';
-                    setError(`Üzgünüz, bir sorun oluştu. ${safetyMessage}`);
-                }
-            } catch (err) {
-                setError(`Bir hata oluştu: ${err.message}`);
-                console.error(err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        return (
-            <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4 sm:p-6 lg:p-8">
-                <div className="w-full max-w-3xl mx-auto">
-                    <header className="text-center mb-8">
-                        <h1 className="text-4xl font-bold text-gray-800">Yapay Zeka Matematik Çözücü</h1>
-                        <p className="text-lg text-gray-600 mt-2">Matematik probleminizin fotoğrafını yükleyin, çözümünü anında alın!</p>
-                    </header>
-                    
-                    <main className="bg-white rounded-2xl shadow-xl p-6 md:p-8 space-y-6">
-                        {!image ? (
-                             <div 
-                                className="border-4 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-indigo-500 transition-colors"
-                                onClick={() => fileInputRef.current.click()}
-                                onDrop={handleDrop}
-                                onDragOver={handleDragOver}
-                            >
-                                <input type="file" accept="image/*" onChange={handleFileSelect} ref={fileInputRef} className="hidden" />
-                                <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                <p className="mt-4 text-sm text-gray-600">
-                                    <span className="font-semibold text-indigo-600">Dosya seçmek için tıklayın</span> veya sürükleyip bırakın
-                                </p>
-                                <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF (Max 10MB)</p>
-                            </div>
-                        ) : (
-                            <div className="relative text-center">
-                                <img src={URL.createObjectURL(image)} alt="Yüklenen Problem" className="max-h-80 w-auto mx-auto rounded-lg shadow-md" />
-                                <button onClick={removeImage} className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                </button>
-                            </div>
-                        )}
-                        
-                        <div>
-                            <button 
-                                onClick={solveProblem}
-                                disabled={!image || isLoading}
-                                className="w-full py-3 px-4 text-lg font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-all flex items-center justify-center"
-                            >
-                                {isLoading ? (
-                                    <>
-                                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        Çözülüyor...
-                                    </>
-                                ) : (
-                                    'Problemi Çöz'
-                                )}
-                            </button>
-                        </div>
-                        
-                        {error && (
-                            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert">
-                                <strong className="font-bold">Hata: </strong>
-                                <span className="block sm:inline">{error}</span>
-                            </div>
-                        )}
-                        
-                        {solution && (
-                            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
-                                <h2 className="text-2xl font-bold text-gray-800 mb-4">Adım Adım Çözüm</h2>
-                                <div className="text-lg leading-relaxed">
-                                   <MathRenderer text={solution} />
-                                </div>
-                            </div>
-                        )}
-                    </main>
-                     <footer className="text-center py-6 mt-6">
-                        <p className="text-gray-500 text-sm">&copy; {new Date().getFullYear()} Matematik Çözücü. Yapay Zeka ile güçlendirilmiştir.</p>
-                    </footer>
+            <!-- Dosya Yükleme Alanı -->
+            <div class="bg-gray-800 border-2 border-dashed border-gray-600 rounded-xl p-8 sm:p-12 text-center transition-all duration-300" id="drop-zone">
+                <input type="file" id="file-input" multiple class="hidden">
+                
+                <!-- SVG İkonu -->
+                <div class="flex justify-center mb-4">
+                    <svg class="w-16 h-16 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l-3 3m3-3l3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                    </svg>
                 </div>
+                
+                <p class="text-xl font-semibold text-white">Dosyanızı buraya sürükleyin</p>
+                <p class="text-slate-400 mt-1">veya</p>
+                <button id="browse-btn" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-300">
+                    Dosya Seç
+                </button>
             </div>
-        );
-    };
 
-    const container = document.getElementById('root');
-    const root = ReactDOM.createRoot(container);
-    root.render(<App />);
+            <!-- Yüklenen Dosyalar Listesi -->
+            <div id="file-list-container" class="mt-8">
+                <!-- Dinamik olarak doldurulacak -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Kopyalama Bildirimi (Toast) -->
+    <div id="toast" class="toast fixed bottom-5 right-5 bg-green-600 text-white py-3 px-6 rounded-lg shadow-lg opacity-0 transform translate-y-10">
+        Link panoya kopyalandı!
+    </div>
+
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const browseBtn = document.getElementById('browse-btn');
+        const fileListContainer = document.getElementById('file-list-container');
+        const toast = document.getElementById('toast');
+
+        // Dosya seçme butonuna tıklanınca gizli input'u tetikle
+        browseBtn.addEventListener('click', () => fileInput.click());
+        
+        // Dosya seçildiğinde
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        // Sürükle-Bırak Olayları
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                handleFiles(files);
+            }
+        });
+        
+        // Tıklama ile de dosya yükleme alanı tetiklenebilir
+        dropZone.addEventListener('click', (e) => {
+             if (e.target.id === 'drop-zone' || e.target.parentElement.id === 'drop-zone' || e.target.tagName === 'P') {
+                fileInput.click();
+            }
+        });
+
+
+        // Dosyaları işleyen ana fonksiyon
+        function handleFiles(files) {
+            if (files.length === 0) return;
+
+            // Eğer "Henüz dosya yüklenmedi" mesajı varsa kaldır
+            const existingPlaceholder = document.getElementById('placeholder');
+            if(existingPlaceholder) {
+                existingPlaceholder.remove();
+            } else if (fileListContainer.children.length === 0) {
+                 // Başlık ekle
+                const header = document.createElement('h2');
+                header.className = 'text-2xl font-bold text-white mb-4';
+                header.textContent = 'Paylaşım Linkleri';
+                fileListContainer.appendChild(header);
+            }
+
+            // Her bir dosya için kart oluştur
+            [...files].forEach(file => {
+                const fileURL = URL.createObjectURL(file);
+                createFileCard(file, fileURL);
+            });
+        }
+        
+        // Dosya boyutunu formatlayan yardımcı fonksiyon
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Dosya için arayüz kartı oluşturan fonksiyon
+        function createFileCard(file, url) {
+            const fileSize = formatFileSize(file.size);
+            const cardHTML = `
+                <div class="bg-gray-800 rounded-lg p-4 flex flex-col sm:flex-row items-center gap-4 mb-4 animate-fade-in">
+                    <!-- Dosya ikonu -->
+                    <div class="flex-shrink-0">
+                        <svg class="w-10 h-10 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
+                    </div>
+                    <!-- Dosya Bilgileri -->
+                    <div class="flex-grow text-center sm:text-left">
+                        <p class="font-semibold text-white truncate">${file.name}</p>
+                        <p class="text-sm text-slate-400">${fileSize}</p>
+                    </div>
+                     <!-- Link Alanı -->
+                    <div class="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-2 mt-4 sm:mt-0">
+                         <input type="text" value="${url}" readonly class="w-full bg-gray-700 text-slate-300 border border-gray-600 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none select-all">
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <button class="copy-btn w-1/2 sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-300 flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.353-.026.692-.04 1.024-.04h.022c.332 0 .671.014 1.024.04.834.06 1.631.343 2.226.835l.937 1.01-3.75 3.75-2.226-2.225.937-1.01c-.13-.14-.28-.266-.442-.372z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9.375l-3.75 3.75-2.226-2.226.937-1.01c.13-.14.28-.266.442-.372.29.123.595.218.92.283.326.066.66.1.996.1h.022c.336 0 .67-.034.996-.1.325-.065.63-.16.92-.283.162.106.312.232.442.372z" /></svg>
+                                Kopyala
+                            </button>
+                            <a href="${url}" download="${file.name}" class="download-btn w-1/2 sm:w-auto bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-300 flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                                İndir
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            fileListContainer.insertAdjacentHTML('beforeend', cardHTML);
+        }
+
+        // Kopyala butonlarına olay dinleyici ekle (event delegation ile)
+        document.body.addEventListener('click', (e) => {
+            const copyBtn = e.target.closest('.copy-btn');
+            if (copyBtn) {
+                const urlInput = copyBtn.closest('.flex-col').querySelector('input[type="text"]');
+                copyToClipboard(urlInput.value);
+            }
+        });
+        
+        // Panoya kopyalama fonksiyonu
+        function copyToClipboard(text) {
+             const tempInput = document.createElement('textarea');
+             tempInput.value = text;
+             document.body.appendChild(tempInput);
+             tempInput.select();
+             document.execCommand('copy');
+             document.body.removeChild(tempInput);
+             showToast();
+        }
+
+        // Kopyalama bildirimini göster
+        function showToast() {
+            toast.classList.remove('opacity-0', 'translate-y-10');
+            toast.classList.add('opacity-100', 'transform-none');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'transform-none');
+                toast.classList.add('opacity-0', 'translate-y-10');
+            }, 3000);
+        }
+
     </script>
-
 </body>
 </html>
-
