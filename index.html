@@ -1,182 +1,255 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Malatya: Güneşin ve Tarihin Başkenti</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <style>
-    body { background-color: #0a0a0a; color: #f5f5f5; font-family: Calibri, sans-serif; }
-    .nav-link { transition: color 0.3s ease; }
-    .nav-link:hover { color: #fbbf24; }
-    .scroll-reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s ease; }
-    .scroll-reveal.visible { opacity: 1; transform: translateY(0); }
-    .video-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 50; }
-    .video-modal.open { display: flex; }
-    .video-modal-content { width: 90%; max-width: 900px; aspect-ratio: 16/9; background: #000; position: relative; }
-    .video-modal-close { position: absolute; top: 10px; right: 10px; cursor: pointer; font-size: 24px; color: #fff; }
-    #preloader { position: fixed; inset: 0; background: #000; display: flex; justify-content: center; align-items: center; z-index: 100; }
-    #preloader span { width: 50px; height: 50px; border: 5px solid #fbbf24; border-top: 5px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; }
-    @keyframes spin { 100% { transform: rotate(360deg); } }
-    header { position: fixed; top: 0; left: 0; width: 100%; z-index: 40; transition: background 0.3s ease; }
-    header.scrolled { background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yapay Zeka Destekli Matematik Çözücü</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & Babel for JSX -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- KaTeX for Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMeaMurDcGPPníSKSFdKZWxaxG4kvJIMwpA_psDAAPjUSUGah" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+        }
+        .katex-display {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.5rem 0;
+        }
+    </style>
 </head>
-<body class="overflow-x-hidden">
+<body>
 
-  <!-- Preloader -->
-  <div id="preloader"><span></span></div>
+    <div id="root"></div>
 
-  <!-- Navbar -->
-  <header id="navbar" class="py-4 px-6 flex justify-between items-center">
-    <h1 class="text-2xl font-bold text-amber-400">Malatya</h1>
-    <nav class="space-x-6">
-      <a href="#hakkinda" class="nav-link">Hakkında</a>
-      <a href="#kesfet" class="nav-link">Saklı Cennetler</a>
-      <a href="#iletisim" class="nav-link">İletişim</a>
-    </nav>
-  </header>
+    <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
 
-  <!-- Hero -->
-  <section class="relative h-screen flex justify-center items-center text-center">
-    <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover">
-      <source src="https://videos.pexels.com/video-files/857195/857195-hd_1920_1080_25fps.mp4" type="video/mp4">
-    </video>
-    <div class="absolute inset-0 bg-black/60"></div>
-    <div class="relative z-10 px-6">
-      <h2 class="text-4xl md:text-6xl font-bold mb-6">Güneşin ve Tarihin Başkenti</h2>
-      <button id="play-video-btn" class="px-6 py-3 bg-amber-500 text-black font-bold rounded-lg shadow-lg hover:bg-amber-400 transition">
-        <i class="fa-solid fa-play mr-2"></i>Tanıtım Videosunu İzle
-      </button>
-    </div>
-  </section>
+    // Component to render math formulas using KaTeX
+    const MathRenderer = ({ text }) => {
+        const parts = text.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$)/g);
 
-  <!-- Hakkında -->
-  <section id="hakkinda" class="py-20 px-6 bg-[#111]">
-    <div class="max-w-4xl mx-auto text-center scroll-reveal">
-      <h2 class="font-serif text-4xl md:text-6xl font-bold">Hakkında</h2>
-      <p class="mt-6 text-lg text-gray-400">
-        Malatya, tarihiyle, doğasıyla ve kayısısıyla Anadolu’nun incilerinden biridir.
-      </p>
-    </div>
-  </section>
+        return (
+            <div className="prose max-w-none text-gray-800">
+                {parts.map((part, index) => {
+                    if (part.startsWith('$$') && part.endsWith('$$')) {
+                        const math = part.substring(2, part.length - 2);
+                        const html = katex.renderToString(math, { throwOnError: false, displayMode: true });
+                        return <div key={index} dangerouslySetInnerHTML={{ __html: html }} />;
+                    } else if (part.startsWith('$') && part.endsWith('$')) {
+                        const math = part.substring(1, part.length - 1);
+                        const html = katex.renderToString(math, { throwOnError: false, displayMode: false });
+                        return <span key={index} dangerouslySetInnerHTML={{ __html: html }} />;
+                    }
+                    return <span key={index}>{part}</span>;
+                })}
+            </div>
+        );
+    };
 
-  <!-- Saklı Cennetler -->
-  <section id="kesfet" class="py-20 px-6 bg-[#111]">
-    <div class="max-w-6xl mx-auto text-center">
-      <h2 class="font-serif text-4xl md:text-6xl font-bold scroll-reveal">Saklı Cennetler</h2>
-      <p class="mt-4 text-lg text-gray-400 mb-12 scroll-reveal">Malatya'nın gizli kalmış güzelliklerini görselleriyle ve konumlarıyla keşfedin.</p>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+    const App = () => {
+        const [image, setImage] = useState(null);
+        const [imageBase64, setImageBase64] = useState('');
+        const [solution, setSolution] = useState('');
+        const [isLoading, setIsLoading] = useState(false);
+        const [error, setError] = useState('');
+        const fileInputRef = useRef(null);
+
+        const handleImageChange = (file) => {
+            if (file && file.type.startsWith('image/')) {
+                setImage(file);
+                setError('');
+                setSolution('');
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setImageBase64(reader.result.split(',')[1]); // Get only base64 data
+                };
+                reader.readAsDataURL(file);
+            } else {
+                setError('Lütfen geçerli bir resim dosyası seçin.');
+                setImage(null);
+                setImageBase64('');
+            }
+        };
         
-        <!-- Günpınar Şelalesi -->
-        <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/G%C3%9CNPINAR_%C5%9EELALES%C4%B0_-_DARENDE_-_panoramio.jpg" alt="Günpınar Şelalesi" class="w-full h-64 object-cover">
-          <div class="p-4 bg-black">
-            <h3 class="text-amber-400 font-bold text-xl">Günpınar Şelalesi</h3>
-            <p class="text-gray-300">Darende, Malatya – 38.555855° N, 37.423248° E</p>
-          </div>
-        </div>
+        const handleFileSelect = (event) => {
+            const file = event.target.files[0];
+            handleImageChange(file);
+        };
+        
+        const handleDrop = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const file = event.dataTransfer.files[0];
+            handleImageChange(file);
+        };
 
-        <!-- Nemrut Dağı -->
-        <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
-          <img src="https://images.unsplash.com/photo-1607166534667-fbb6d870a9a6?auto=format&fit=crop&w=800&q=80" alt="Nemrut Dağı" class="w-full h-64 object-cover">
-          <div class="p-4 bg-black">
-            <h3 class="text-amber-400 font-bold text-xl">Nemrut Dağı</h3>
-            <p class="text-gray-300">Kahta, Adıyaman – 37.7400° N, 38.5333° E</p>
-          </div>
-        </div>
+        const handleDragOver = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+        };
 
-        <!-- Nemrut Heykelleri -->
-        <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
-          <img src="https://images.unsplash.com/photo-1614436168316-bf6a79a7a1ef?auto=format&fit=crop&w=800&q=80" alt="Nemrut Heykelleri" class="w-full h-64 object-cover">
-          <div class="p-4 bg-black">
-            <h3 class="text-amber-400 font-bold text-xl">Nemrut Heykelleri</h3>
-            <p class="text-gray-300">Adıyaman – Doğu Terası</p>
-          </div>
-        </div>
+        const removeImage = () => {
+            setImage(null);
+            setImageBase64('');
+            setSolution('');
+        };
+        
+        const solveProblem = async () => {
+            if (!imageBase64) {
+                setError('Lütfen önce bir resim yükleyin.');
+                return;
+            }
 
-        <!-- Silahtar Mustafa Paşa Kervansarayı -->
-        <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/4/47/Silahtar_Mustafa_Pasa_Kervansarayi_-_Malatya.jpg" alt="Silahtar Mustafa Paşa Kervansarayı" class="w-full h-64 object-cover">
-          <div class="p-4 bg-black">
-            <h3 class="text-amber-400 font-bold text-xl">Silahtar Mustafa Paşa Kervansarayı</h3>
-            <p class="text-gray-300">Battalgazi, Malatya – 38.4376° N, 38.3556° E</p>
-          </div>
-        </div>
+            setIsLoading(true);
+            setError('');
+            setSolution('');
 
-        <!-- Arslantepe Höyüğü -->
-        <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/f/f6/Arslantepe_H%C3%B6y%C3%BC%C4%9F%C3%BC%2C_Malatya.jpg" alt="Arslantepe Höyüğü" class="w-full h-64 object-cover">
-          <div class="p-4 bg-black">
-            <h3 class="text-amber-400 font-bold text-xl">Arslantepe Höyüğü</h3>
-            <p class="text-gray-300">Orduzu, Malatya – 38.3741° N, 38.4236° E</p>
-          </div>
-        </div>
+            const apiKey = ""; // API Key will be injected by the environment.
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
-        <!-- Battalgazi Ulu Camii -->
-        <div class="rounded-lg overflow-hidden shadow-lg scroll-reveal">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Battalgazi_Ulu_Camii_-_Malatya.jpg" alt="Battalgazi Ulu Camii" class="w-full h-64 object-cover">
-          <div class="p-4 bg-black">
-            <h3 class="text-amber-400 font-bold text-xl">Battalgazi Ulu Camii</h3>
-            <p class="text-gray-300">Battalgazi, Malatya – 38.4479° N, 38.3573° E</p>
-          </div>
-        </div>
+            const payload = {
+                contents: [
+                    {
+                        parts: [
+                            { text: "Bu resimdeki matematik problemini adım adım, detaylı bir şekilde açıkla ve çöz. Sonucu belirgin bir şekilde belirt. Matematiksel ifadeler için LaTeX formatı kullan (örneğin, $x^2 + y^2 = z^2$ veya $$ \int a^x dx = \frac{a^x}{\ln a} + C $$ gibi)." },
+                            {
+                                inlineData: {
+                                    mimeType: image.type,
+                                    data: imageBase64
+                                }
+                            }
+                        ]
+                    }
+                ]
+            };
+            
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
 
-      </div>
-    </div>
-  </section>
+                if (!response.ok) {
+                    throw new Error(`API hatası: ${response.status} ${response.statusText}`);
+                }
 
-  <!-- Footer -->
-  <footer id="iletisim" class="text-center py-10 bg-black border-t border-gray-900">
-    <p class="text-gray-500">Bu web sitesi, Malatya'nın kültürel ve doğal mirasına adanmıştır.</p>
-  </footer>
+                const result = await response.json();
+                const candidate = result.candidates?.[0];
 
-  <!-- Video Modal -->
-  <div id="video-modal" class="video-modal">
-    <div class="video-modal-content">
-      <i id="close-modal-btn" class="fa-solid fa-times video-modal-close"></i>
-      <iframe id="youtube-player" width="100%" height="100%" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-    </div>
-  </div>
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    setSolution(candidate.content.parts[0].text);
+                } else {
+                    const safetyMessage = candidate?.finishReason === 'SAFETY' ? 'İçerik güvenlik politikalarını ihlal ediyor.' : 'Geçerli bir çözüm bulunamadı.';
+                    setError(`Üzgünüz, bir sorun oluştu. ${safetyMessage}`);
+                }
+            } catch (err) {
+                setError(`Bir hata oluştu: ${err.message}`);
+                console.error(err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Preloader
-      const preloader = document.getElementById('preloader');
-      window.addEventListener('load', () => {
-        preloader.style.opacity = '0';
-        preloader.style.visibility = 'hidden';
-      });
+        return (
+            <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4 sm:p-6 lg:p-8">
+                <div className="w-full max-w-3xl mx-auto">
+                    <header className="text-center mb-8">
+                        <h1 className="text-4xl font-bold text-gray-800">Yapay Zeka Matematik Çözücü</h1>
+                        <p className="text-lg text-gray-600 mt-2">Matematik probleminizin fotoğrafını yükleyin, çözümünü anında alın!</p>
+                    </header>
+                    
+                    <main className="bg-white rounded-2xl shadow-xl p-6 md:p-8 space-y-6">
+                        {!image ? (
+                             <div 
+                                className="border-4 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-indigo-500 transition-colors"
+                                onClick={() => fileInputRef.current.click()}
+                                onDrop={handleDrop}
+                                onDragOver={handleDragOver}
+                            >
+                                <input type="file" accept="image/*" onChange={handleFileSelect} ref={fileInputRef} className="hidden" />
+                                <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                <p className="mt-4 text-sm text-gray-600">
+                                    <span className="font-semibold text-indigo-600">Dosya seçmek için tıklayın</span> veya sürükleyip bırakın
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF (Max 10MB)</p>
+                            </div>
+                        ) : (
+                            <div className="relative text-center">
+                                <img src={URL.createObjectURL(image)} alt="Yüklenen Problem" className="max-h-80 w-auto mx-auto rounded-lg shadow-md" />
+                                <button onClick={removeImage} className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                </button>
+                            </div>
+                        )}
+                        
+                        <div>
+                            <button 
+                                onClick={solveProblem}
+                                disabled={!image || isLoading}
+                                className="w-full py-3 px-4 text-lg font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-all flex items-center justify-center"
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Çözülüyor...
+                                    </>
+                                ) : (
+                                    'Problemi Çöz'
+                                )}
+                            </button>
+                        </div>
+                        
+                        {error && (
+                            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert">
+                                <strong className="font-bold">Hata: </strong>
+                                <span className="block sm:inline">{error}</span>
+                            </div>
+                        )}
+                        
+                        {solution && (
+                            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
+                                <h2 className="text-2xl font-bold text-gray-800 mb-4">Adım Adım Çözüm</h2>
+                                <div className="text-lg leading-relaxed">
+                                   <MathRenderer text={solution} />
+                                </div>
+                            </div>
+                        )}
+                    </main>
+                     <footer className="text-center py-6 mt-6">
+                        <p className="text-gray-500 text-sm">&copy; {new Date().getFullYear()} Matematik Çözücü. Yapay Zeka ile güçlendirilmiştir.</p>
+                    </footer>
+                </div>
+            </div>
+        );
+    };
 
-      // Navbar
-      const navbar = document.getElementById('navbar');
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) navbar.classList.add('scrolled');
-        else navbar.classList.remove('scrolled');
-      });
+    const container = document.getElementById('root');
+    const root = ReactDOM.createRoot(container);
+    root.render(<App />);
+    </script>
 
-      // Scroll Reveal
-      const revealElements = document.querySelectorAll('.scroll-reveal');
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
-      }, { threshold: 0.1 });
-      revealElements.forEach(el => observer.observe(el));
-
-      // Video Modal
-      const videoModal = document.getElementById('video-modal');
-      const playBtn = document.getElementById('play-video-btn');
-      const closeBtn = document.getElementById('close-modal-btn');
-      const youtubePlayer = document.getElementById('youtube-player');
-      const videoId = '8i8E2v4hJ2s';
-      playBtn.addEventListener('click', () => {
-        youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-        videoModal.classList.add('open');
-      });
-      const closeModal = () => { youtubePlayer.src = ''; videoModal.classList.remove('open'); };
-      closeBtn.addEventListener('click', closeModal);
-      videoModal.addEventListener('click', (e) => { if (e.target === videoModal) closeModal(); });
-    });
-  </script>
 </body>
 </html>
+
