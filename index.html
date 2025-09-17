@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dosya Paylaşım Platformu</title>
+    <title>Bugün Ne Yesem? - Karar Tekerleği</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,199 +13,295 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        .drag-over {
-            border-color: #3b82f6; /* blue-500 */
-            background-color: #1f2937; /* gray-800 */
+        .wheel-container {
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
         }
-        .toast {
-            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        canvas {
+            transform-origin: center center;
+            transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        #spin-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .pointer {
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+            transition: all 0.3s;
+        }
+        /* Konfeti Stilleri */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0.9;
+            animation: fall 3s linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-slate-200">
+<body class="bg-gray-900 text-slate-200 flex flex-col items-center justify-center min-h-screen p-4">
 
-    <!-- Ana Konteyner -->
-    <div class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
-        <div class="w-full max-w-4xl mx-auto">
-            
-            <!-- Başlık Alanı -->
-            <header class="text-center mb-8">
-                <h1 class="text-4xl sm:text-5xl font-bold text-white mb-2">Dosya Yükle ve Paylaş</h1>
-                <p class="text-lg text-slate-400">Dosyalarınızı kolayca yükleyin ve anında paylaşım linki oluşturun.</p>
+    <div class="w-full max-w-5xl mx-auto flex flex-col lg:flex-row gap-8 items-center lg:items-start">
+        
+        <!-- Tekerlek Alanı -->
+        <div class="flex-1 flex flex-col items-center w-full max-w-md">
+            <header class="text-center mb-6">
+                <h1 class="text-4xl sm:text-5xl font-bold text-white mb-2">Bugün Ne Yesem?</h1>
+                <p class="text-lg text-slate-400">Kararsızlığa son!</p>
             </header>
-
-            <!-- Dosya Yükleme Alanı -->
-            <div class="bg-gray-800 border-2 border-dashed border-gray-600 rounded-xl p-8 sm:p-12 text-center transition-all duration-300" id="drop-zone">
-                <input type="file" id="file-input" multiple class="hidden">
-                
-                <!-- SVG İkonu -->
-                <div class="flex justify-center mb-4">
-                    <svg class="w-16 h-16 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l-3 3m3-3l3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
-                    </svg>
-                </div>
-                
-                <p class="text-xl font-semibold text-white">Dosyanızı buraya sürükleyin</p>
-                <p class="text-slate-400 mt-1">veya</p>
-                <button id="browse-btn" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-300">
-                    Dosya Seç
-                </button>
+            <div class="relative w-full aspect-square flex items-center justify-center wheel-container">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2/3 w-8 h-8 bg-yellow-400 pointer z-10"></div>
+                <canvas id="wheel" width="500" height="500" class="w-full h-full"></canvas>
             </div>
+            <button id="spin-btn" class="mt-6 bg-rose-600 hover:bg-rose-700 text-white font-bold py-4 px-12 text-xl rounded-full shadow-lg transition-all duration-300 transform hover:scale-105">
+                ÇEVİR!
+            </button>
+        </div>
 
-            <!-- Yüklenen Dosyalar Listesi -->
-            <div id="file-list-container" class="mt-8">
-                <!-- Dinamik olarak doldurulacak -->
+        <!-- Seçenekler Alanı -->
+        <div class="w-full lg:w-1/3 bg-gray-800 p-6 rounded-2xl shadow-lg">
+            <h2 class="text-2xl font-bold text-white mb-4">Seçenekler</h2>
+            <div id="options-list" class="mb-4 max-h-60 overflow-y-auto pr-2">
+                <!-- Seçenekler buraya eklenecek -->
+            </div>
+            <div class="flex gap-2">
+                <input type="text" id="new-option" placeholder="Yeni seçenek ekle..." class="flex-grow bg-gray-700 text-slate-200 border border-gray-600 rounded-md px-3 py-2 focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                <button id="add-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors">Ekle</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sonuç Modalı -->
+    <div id="result-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
+        <div id="confetti-container" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+        <div class="bg-gray-800 rounded-2xl shadow-2xl p-8 text-center transform scale-90 transition-transform duration-300 z-10">
+            <p class="text-xl text-slate-400 mb-2">Harika bir seçim!</p>
+            <h2 id="result-text" class="text-5xl font-bold text-yellow-400 mb-6"></h2>
+            <div class="flex gap-4 justify-center">
+                <button id="remove-winner-btn" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">Kazananı Kaldır</button>
+                <button id="close-modal-btn" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 px-8 rounded-lg transition-colors">Kapat</button>
             </div>
         </div>
     </div>
 
-    <!-- Kopyalama Bildirimi (Toast) -->
-    <div id="toast" class="toast fixed bottom-5 right-5 bg-green-600 text-white py-3 px-6 rounded-lg shadow-lg opacity-0 transform translate-y-10">
-        Link panoya kopyalandı!
-    </div>
-
-
     <script>
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
-        const browseBtn = document.getElementById('browse-btn');
-        const fileListContainer = document.getElementById('file-list-container');
-        const toast = document.getElementById('toast');
+        const canvas = document.getElementById('wheel');
+        const ctx = canvas.getContext('2d');
+        const spinBtn = document.getElementById('spin-btn');
+        const newOptionInput = document.getElementById('new-option');
+        const addBtn = document.getElementById('add-btn');
+        const optionsListContainer = document.getElementById('options-list');
+        const resultModal = document.getElementById('result-modal');
+        const resultText = document.getElementById('result-text');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const removeWinnerBtn = document.getElementById('remove-winner-btn');
+        const confettiContainer = document.getElementById('confetti-container');
 
-        // Dosya seçme butonuna tıklanınca gizli input'u tetikle
-        browseBtn.addEventListener('click', () => fileInput.click());
+        let options = JSON.parse(localStorage.getItem('wheelOptions')) || ['Pizza', 'Hamburger', 'Döner', 'Lahmacun', 'Makarna', 'Salata', 'Tavuk Sote', 'Çorba'];
         
-        // Dosya seçildiğinde
-        fileInput.addEventListener('change', (e) => {
-            handleFiles(e.target.files);
-        });
+        const colors = ['#f87171', '#fb923c', '#facc15', '#a3e635', '#4ade80', '#38bdf8', '#818cf8', '#c084fc'];
+        let currentRotation = 0;
+        let isSpinning = false;
+        let lastWinningIndex = null;
 
-        // Sürükle-Bırak Olayları
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('drag-over');
-        });
+        // --- Ses Efektleri ---
+        let audioInitialized = false;
+        let tickSynth, winSynth;
 
-        dropZone.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('drag-over');
-        });
+        const initializeAudio = async () => {
+            if (audioInitialized) return;
+            await Tone.start();
+            tickSynth = new Tone.MembraneSynth({
+                pitchDecay: 0.01, octaves: 2, envelope: { attack: 0.001, decay: 0.2, sustain: 0 },
+            }).toDestination();
+            winSynth = new Tone.PolySynth(Tone.Synth, {
+                 envelope: { attack: 0.01, decay: 0.2, sustain: 0.3, release: 0.5 },
+            }).toDestination();
+            audioInitialized = true;
+        };
 
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('drag-over');
-            const files = e.dataTransfer.files;
-            if (files.length) {
-                handleFiles(files);
-            }
-        });
-        
-        // Tıklama ile de dosya yükleme alanı tetiklenebilir
-        dropZone.addEventListener('click', (e) => {
-             if (e.target.id === 'drop-zone' || e.target.parentElement.id === 'drop-zone' || e.target.tagName === 'P') {
-                fileInput.click();
-            }
-        });
+        const drawWheel = () => {
+            const numOptions = options.length;
+            const arcSize = 2 * Math.PI / numOptions;
+            const centerX = 250;
+            const centerY = 250;
+            const radius = 250;
 
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = 'bold 24px Inter';
+            
+            options.forEach((option, i) => {
+                const angle = i * arcSize;
+                ctx.fillStyle = colors[i % colors.length];
 
-        // Dosyaları işleyen ana fonksiyon
-        function handleFiles(files) {
-            if (files.length === 0) return;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, angle, angle + arcSize, false);
+                ctx.lineTo(centerX, centerY);
+                ctx.fill();
+                
+                ctx.strokeStyle = '#374151'; // gray-700 for border
+                ctx.lineWidth = 4;
+                ctx.stroke();
 
-            // Eğer "Henüz dosya yüklenmedi" mesajı varsa kaldır
-            const existingPlaceholder = document.getElementById('placeholder');
-            if(existingPlaceholder) {
-                existingPlaceholder.remove();
-            } else if (fileListContainer.children.length === 0) {
-                 // Başlık ekle
-                const header = document.createElement('h2');
-                header.className = 'text-2xl font-bold text-white mb-4';
-                header.textContent = 'Paylaşım Linkleri';
-                fileListContainer.appendChild(header);
-            }
-
-            // Her bir dosya için kart oluştur
-            [...files].forEach(file => {
-                const fileURL = URL.createObjectURL(file);
-                createFileCard(file, fileURL);
+                ctx.save();
+                ctx.fillStyle = 'white';
+                ctx.translate(centerX + Math.cos(angle + arcSize / 2) * (radius - 70), centerY + Math.sin(angle + arcSize / 2) * (radius - 70));
+                ctx.rotate(angle + arcSize / 2 + Math.PI / 2);
+                const text = option.length > 12 ? option.substring(0, 11) + '…' : option;
+                ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
+                ctx.restore();
             });
-        }
+            
+            // Çarkın merkezini çiz
+            ctx.fillStyle = '#4b5563'; // gray-600
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 40, 0, 2 * Math.PI, false);
+            ctx.fill();
+            
+            ctx.fillStyle = '#9ca3af'; // gray-400
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 25, 0, 2 * Math.PI, false);
+            ctx.fill();
+        };
         
-        // Dosya boyutunu formatlayan yardımcı fonksiyon
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        // Dosya için arayüz kartı oluşturan fonksiyon
-        function createFileCard(file, url) {
-            const fileSize = formatFileSize(file.size);
-            const cardHTML = `
-                <div class="bg-gray-800 rounded-lg p-4 flex flex-col sm:flex-row items-center gap-4 mb-4 animate-fade-in">
-                    <!-- Dosya ikonu -->
-                    <div class="flex-shrink-0">
-                        <svg class="w-10 h-10 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                           <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                        </svg>
-                    </div>
-                    <!-- Dosya Bilgileri -->
-                    <div class="flex-grow text-center sm:text-left">
-                        <p class="font-semibold text-white truncate">${file.name}</p>
-                        <p class="text-sm text-slate-400">${fileSize}</p>
-                    </div>
-                     <!-- Link Alanı -->
-                    <div class="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-2 mt-4 sm:mt-0">
-                         <input type="text" value="${url}" readonly class="w-full bg-gray-700 text-slate-300 border border-gray-600 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none select-all">
-                        <div class="flex gap-2 w-full sm:w-auto">
-                            <button class="copy-btn w-1/2 sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-300 flex items-center justify-center gap-2">
-                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.353-.026.692-.04 1.024-.04h.022c.332 0 .671.014 1.024.04.834.06 1.631.343 2.226.835l.937 1.01-3.75 3.75-2.226-2.225.937-1.01c-.13-.14-.28-.266-.442-.372z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9.375l-3.75 3.75-2.226-2.226.937-1.01c.13-.14.28-.266.442-.372.29.123.595.218.92.283.326.066.66.1.996.1h.022c.336 0 .67-.034.996-.1.325-.065.63-.16.92-.283.162.106.312.232.442.372z" /></svg>
-                                Kopyala
-                            </button>
-                            <a href="${url}" download="${file.name}" class="download-btn w-1/2 sm:w-auto bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-300 flex items-center justify-center gap-2">
-                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
-                                İndir
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            `;
-            fileListContainer.insertAdjacentHTML('beforeend', cardHTML);
-        }
-
-        // Kopyala butonlarına olay dinleyici ekle (event delegation ile)
-        document.body.addEventListener('click', (e) => {
-            const copyBtn = e.target.closest('.copy-btn');
-            if (copyBtn) {
-                const urlInput = copyBtn.closest('.flex-col').querySelector('input[type="text"]');
-                copyToClipboard(urlInput.value);
+        const updateOptionsList = () => {
+            optionsListContainer.innerHTML = '';
+            if(options.length < 2){
+                 optionsListContainer.innerHTML = `<p class="text-slate-500 text-center">${options.length === 1 ? 'Çevirmek için en az 2 seçenek gerekir.' : 'Lütfen seçenek ekleyin.'}</p>`;
+                 spinBtn.disabled = true;
+            } else {
+                 spinBtn.disabled = false;
             }
-        });
-        
-        // Panoya kopyalama fonksiyonu
-        function copyToClipboard(text) {
-             const tempInput = document.createElement('textarea');
-             tempInput.value = text;
-             document.body.appendChild(tempInput);
-             tempInput.select();
-             document.execCommand('copy');
-             document.body.removeChild(tempInput);
-             showToast();
-        }
 
-        // Kopyalama bildirimini göster
-        function showToast() {
-            toast.classList.remove('opacity-0', 'translate-y-10');
-            toast.classList.add('opacity-100', 'transform-none');
+            options.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'flex justify-between items-center bg-gray-700 p-2 rounded-md mb-2 animate-fade-in';
+                optionEl.innerHTML = `
+                    <span class="truncate pr-2">${option}</span>
+                    <button data-index="${index}" class="remove-btn text-xl font-bold text-red-400 hover:text-red-600 leading-none">&times;</button>
+                `;
+                optionsListContainer.appendChild(optionEl);
+            });
+            localStorage.setItem('wheelOptions', JSON.stringify(options));
+        };
+
+        const spin = async () => {
+            if (isSpinning || options.length < 2) return;
+            await initializeAudio();
+            isSpinning = true;
+            spinBtn.disabled = true;
+
+            const randomStopAngle = Math.random() * 360;
+            const extraSpins = 5 * 360; 
+            const totalRotation = extraSpins + randomStopAngle;
+
+            currentRotation += totalRotation;
+            canvas.style.transform = `rotate(${currentRotation}deg)`;
+
+            // Yavaşlayan tik tak sesi
+            let tickDelay = 50;
+            const tick = () => {
+                if (!isSpinning) return;
+                tickSynth.triggerAttackRelease('C2', '8n', Tone.now());
+                tickDelay *= 1.15;
+                if (tickDelay < 400) {
+                    setTimeout(tick, tickDelay);
+                }
+            };
+            tick();
 
             setTimeout(() => {
-                toast.classList.remove('opacity-100', 'transform-none');
-                toast.classList.add('opacity-0', 'translate-y-10');
-            }, 3000);
-        }
+                const actualAngle = (currentRotation % 360);
+                const arcSizeDegrees = 360 / options.length;
+                const winningIndex = Math.floor((360 - actualAngle + 270) % 360 / arcSizeDegrees) % options.length;
+                lastWinningIndex = winningIndex;
+                
+                winSynth.triggerAttackRelease(['C4', 'E4', 'G4'], '0.5');
+                showResult(options[winningIndex]);
+                isSpinning = false;
+            }, 4000); 
+        };
+        
+        const triggerConfetti = () => {
+            confettiContainer.innerHTML = '';
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = Math.random() * -50 + 'vh';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                const size = Math.random() * 8 + 5 + 'px';
+                confetti.style.width = size;
+                confetti.style.height = size;
+                confettiContainer.appendChild(confetti);
+            }
+        };
 
+        const showResult = (result) => {
+            resultText.textContent = result;
+            resultModal.classList.remove('hidden');
+            triggerConfetti();
+            setTimeout(() => {
+                 resultModal.classList.remove('opacity-0');
+                 resultModal.querySelector('.bg-gray-800').classList.remove('scale-90');
+            }, 10);
+        };
+        
+        const hideResult = () => {
+            resultModal.classList.add('opacity-0');
+            resultModal.querySelector('.bg-gray-800').classList.add('scale-90');
+            setTimeout(() => {
+                 resultModal.classList.add('hidden');
+                 confettiContainer.innerHTML = '';
+                 spinBtn.disabled = options.length < 2;
+            }, 300);
+        };
+
+        addBtn.addEventListener('click', () => {
+            const newOption = newOptionInput.value.trim();
+            if (newOption && !options.includes(newOption)) {
+                options.push(newOption);
+                newOptionInput.value = '';
+                updateOptionsList();
+                drawWheel();
+            }
+        });
+        
+        newOptionInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addBtn.click(); });
+
+        optionsListContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-btn')) {
+                const indexToRemove = parseInt(e.target.dataset.index, 10);
+                options.splice(indexToRemove, 1);
+                updateOptionsList();
+                drawWheel();
+            }
+        });
+        
+        removeWinnerBtn.addEventListener('click', () => {
+            if (lastWinningIndex !== null && options[lastWinningIndex]) {
+                 options.splice(lastWinningIndex, 1);
+                 updateOptionsList();
+                 drawWheel();
+                 hideResult();
+            }
+        });
+        
+        spinBtn.addEventListener('click', spin);
+        closeModalBtn.addEventListener('click', hideResult);
+        resultModal.addEventListener('click', (e) => { if (e.target === resultModal) hideResult(); });
+
+        updateOptionsList();
+        drawWheel();
     </script>
 </body>
 </html>
+
